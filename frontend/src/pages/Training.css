@@ -1,0 +1,153 @@
+/* Training.css */
+
+.training-page {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.page-title {
+  font-size: 2rem;
+  font-weight: 600;
+  margin-bottom: 28px;
+  color: var(--text-dark);
+}
+
+/* Programs Grid */
+.programs-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 24px;
+  margin-bottom: 48px;
+}
+
+.program-card {
+  display: flex;
+  flex-direction: column;
+}
+
+.program-card h3 {
+  font-size: 1.3rem;
+  margin-bottom: 12px;
+}
+
+.trainer,
+.duration,
+.schedule {
+  color: var(--text-gray);
+  margin-bottom: 6px;
+  font-size: 0.95rem;
+}
+
+.program-card button {
+  margin-top: 16px;
+  align-self: flex-start;
+}
+
+.program-card button.enrolled {
+  background: #28C76F;
+  cursor: default;
+}
+.program-card button.enrolled:hover {
+  background: #28C76F;
+}
+
+/* User Training Sections */
+.user-training-sections {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+.section-card {
+  padding: 24px;
+}
+
+.section-card h2 {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 20px;
+  color: var(--text-dark);
+  border-bottom: 1px solid var(--border-light);
+  padding-bottom: 8px;
+}
+
+.training-list,
+.certificate-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.training-list li {
+  padding: 12px 0;
+  border-bottom: 1px dashed var(--border-light);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.training-list li:last-child {
+  border-bottom: none;
+}
+
+.training-list li strong {
+  color: var(--primary);
+}
+
+.program-schedule {
+  font-size: 0.85rem;
+  color: var(--text-gray);
+}
+
+.certificate-list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px dashed var(--border-light);
+}
+
+.certificate-list li:last-child {
+  border-bottom: none;
+}
+
+.certificate-list li span {
+  font-weight: 500;
+  color: var(--text-dark);
+}
+
+.btn-secondary {
+  background: transparent;
+  border: 1px solid var(--primary);
+  color: var(--primary);
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-secondary:hover {
+  background: var(--primary);
+  color: white;
+}
+
+.no-data {
+  color: var(--text-gray);
+  font-style: italic;
+  text-align: center;
+  padding: 20px 0;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .user-training-sections {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .user-training-sections {
+    grid-template-columns: 1fr;
+  }
+}

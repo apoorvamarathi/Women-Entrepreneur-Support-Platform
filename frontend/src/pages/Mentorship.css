@@ -1,0 +1,142 @@
+/* Mentorship.css */
+
+.mentorship-page {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.page-title {
+  font-size: 2rem;
+  font-weight: 600;
+  margin-bottom: 28px;
+  color: var(--text-dark);
+}
+
+/* Filters section */
+.filters-section {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 32px;
+  align-items: center;
+}
+
+.search-input {
+  flex: 2;
+  min-width: 250px;
+}
+
+.filter-select {
+  flex: 1;
+  min-width: 150px;
+}
+
+/* Mentor grid */
+.mentor-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 24px;
+  margin-bottom: 48px;
+}
+
+.mentor-card {
+  text-align: center;
+}
+
+.mentor-avatar {
+  font-size: 64px;
+  margin-bottom: 16px;
+}
+
+.mentor-card h3 {
+  font-size: 1.25rem;
+  margin-bottom: 4px;
+}
+
+.expertise {
+  color: var(--primary);
+  font-weight: 500;
+  margin-bottom: 8px;
+}
+
+.experience,
+.availability {
+  color: var(--text-gray);
+  font-size: 0.9rem;
+  margin-bottom: 4px;
+}
+
+.request-btn {
+  width: 100%;
+  margin-top: 16px;
+}
+
+/* Sessions section */
+.sessions-section h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 24px;
+  color: var(--text-dark);
+}
+
+.sessions-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+.session-card {
+  padding: 24px;
+}
+
+.session-card h3 {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 16px;
+  color: var(--text-dark);
+  border-bottom: 1px solid var(--border-light);
+  padding-bottom: 8px;
+}
+
+.session-card ul {
+  list-style: none;
+  padding: 0;
+}
+
+.session-item {
+  padding: 12px 0;
+  border-bottom: 1px dashed var(--border-light);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.session-item:last-child {
+  border-bottom: none;
+}
+
+.session-item strong {
+  color: var(--primary);
+}
+
+.session-item span {
+  font-size: 0.85rem;
+  color: var(--text-gray);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .filters-section {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .search-input,
+  .filter-select {
+    width: 100%;
+  }
+
+  .sessions-grid {
+    grid-template-columns: 1fr;
+  }
+}

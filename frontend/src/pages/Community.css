@@ -1,0 +1,178 @@
+/* Community.css */
+
+.community-page {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.page-title {
+  font-size: 2rem;
+  font-weight: 600;
+  margin-bottom: 28px;
+  color: var(--text-dark);
+}
+
+.community-content {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 24px;
+}
+
+/* Forum Section */
+.forum-section {
+  padding: 24px;
+}
+
+.forum-section h2 {
+  font-size: 1.3rem;
+  font-weight: 600;
+  margin-bottom: 20px;
+  color: var(--text-dark);
+}
+
+.ask-question {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.posts-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.post-item {
+  padding: 16px;
+  border: 1px solid var(--border-light);
+  border-radius: 12px;
+  transition: background 0.2s;
+}
+
+.post-item:hover {
+  background: #fafafa;
+}
+
+.post-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  font-size: 0.9rem;
+}
+
+.post-user {
+  font-weight: 600;
+  color: var(--primary);
+}
+
+.post-time {
+  color: var(--text-gray);
+}
+
+.post-text {
+  color: var(--text-dark);
+  margin-bottom: 12px;
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+.post-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.9rem;
+}
+
+.post-replies {
+  color: var(--text-gray);
+}
+
+.reply-btn {
+  background: none;
+  border: 1px solid var(--primary);
+  color: var(--primary);
+  border-radius: 20px;
+  padding: 4px 16px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.reply-btn:hover {
+  background: var(--primary);
+  color: white;
+}
+
+/* Groups Section */
+.groups-section {
+  padding: 24px;
+}
+
+.groups-section h2 {
+  font-size: 1.3rem;
+  font-weight: 600;
+  margin-bottom: 20px;
+  color: var(--text-dark);
+}
+
+.groups-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.group-card {
+  padding: 16px;
+  border: 1px solid var(--border-light);
+  border-radius: 12px;
+  transition: box-shadow 0.2s;
+}
+
+.group-card:hover {
+  box-shadow: var(--shadow-hover);
+}
+
+.group-card h3 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: var(--text-dark);
+}
+
+.group-members {
+  font-size: 0.9rem;
+  color: var(--primary);
+  font-weight: 500;
+  margin-bottom: 8px;
+}
+
+.group-description {
+  font-size: 0.9rem;
+  color: var(--text-gray);
+  margin-bottom: 12px;
+}
+
+.btn-secondary {
+  background: transparent;
+  border: 1px solid var(--primary);
+  color: var(--primary);
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  width: 100%;
+}
+
+.btn-secondary:hover {
+  background: var(--primary);
+  color: white;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .community-content {
+    grid-template-columns: 1fr;
+  }
+}
