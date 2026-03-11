@@ -14,7 +14,8 @@ import {
   Fade,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
-import { Link as RouterLink } from "react-router-dom";
+import { Link as RouterLink, useNavigate } from "react-router-dom";
+import useAuthStore from "../store/useAuthStore";
 
 // Reuse same styled components (can be imported from a shared file)
 const GradientBackground = styled(Box)(({ theme }) => ({
@@ -85,15 +86,33 @@ const Register = () => {
     confirmPassword: "",
     role: "entrepreneur",
   });
+  const [validationError, setValidationError] = useState("");
+  const navigate = useNavigate();
+  const register = useAuthStore((state) => state.register);
+  const { isLoading, error, clearError } = useAuthStore();
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Add password match validation if needed
-    console.log("Register", formData);
+    clearError();
+    setValidationError("");
+
+    if (formData.password !== formData.confirmPassword) {
+      setValidationError("Passwords do not match");
+      return;
+    }
+
+    try {
+      // Exclude confirmPassword from the payload
+      const { confirmPassword, ...payload } = formData;
+      await register(payload);
+      navigate("/"); // Redirect to dashboard on success
+    } catch (err) {
+      console.error("Registration failed", err);
+    }
   };
 
   return (
@@ -196,11 +215,18 @@ const Register = () => {
                 </Select>
               </FormControl>
 
+              {(error || validationError) && (
+                <Typography color="error" variant="body2" sx={{ mt: 1, textAlign: 'center' }}>
+                  {validationError || error}
+                </Typography>
+              )}
+              
               <Button
                 type="submit"
                 fullWidth
                 variant="contained"
                 size="large"
+                disabled={isLoading}
                 sx={{
                   mt: 3,
                   py: 1.5,
@@ -218,7 +244,7 @@ const Register = () => {
                   },
                 }}
               >
-                Register
+                {isLoading ? 'Registering...' : 'Register'}
               </Button>
 
               <Box sx={{ mt: 2, textAlign: "center" }}>

@@ -10,7 +10,8 @@ import {
   Fade,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
-import { Link as RouterLink } from "react-router-dom";
+import { Link as RouterLink, useNavigate } from "react-router-dom";
+import useAuthStore from "../store/useAuthStore";
 
 const GradientBackground = styled(Box)(({ theme }) => ({
   minHeight: "100vh",
@@ -75,10 +76,19 @@ const StyledAvatar = styled(Box)(({ theme }) => ({
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const navigate = useNavigate();
+  const login = useAuthStore((state) => state.login);
+  const { isLoading, error, clearError } = useAuthStore();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Login", { email, password });
+    clearError();
+    try {
+      await login(email, password);
+      navigate("/"); // Redirect to dashboard on success
+    } catch (err) {
+      console.error("Login failed", err);
+    }
   };
 
   return (
@@ -139,11 +149,18 @@ const Login = () => {
                 required
                 sx={{ "& .MuiOutlinedInput-root": { borderRadius: 3 } }}
               />
+              {error && (
+                <Typography color="error" variant="body2" sx={{ mt: 1, textAlign: 'center' }}>
+                  {error}
+                </Typography>
+              )}
+              
               <Button
                 type="submit"
                 fullWidth
                 variant="contained"
                 size="large"
+                disabled={isLoading}
                 sx={{
                   mt: 3,
                   py: 1.5,
@@ -161,7 +178,7 @@ const Login = () => {
                   },
                 }}
               >
-                Log in
+                {isLoading ? 'Logging in...' : 'Log in'}
               </Button>
 
               <Box
