@@ -1,8 +1,9 @@
+
 import { useState } from "react";
-import { FiBell } from "react-icons/fi";
+import { FiBell, FiMenu } from "react-icons/fi";
 import "./Navbar.css";
 
-const Navbar = () => {
+const Navbar = ({ toggleSidebar }) => {
   const [showNotifications, setShowNotifications] = useState(false);
 
   const notifications = [
@@ -15,6 +16,9 @@ const Navbar = () => {
   return (
     <div className="navbar">
       <div className="navbar-left">
+        <button className="mobile-menu-btn" onClick={toggleSidebar}>
+          <FiMenu />
+        </button>
         <h2>Welcome back, Sarah!</h2>
       </div>
       <div className="navbar-right">

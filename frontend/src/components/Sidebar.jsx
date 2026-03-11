@@ -1,8 +1,9 @@
+
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { FiGrid, FiUser, FiUsers, FiBookOpen, FiDollarSign, FiCalendar, FiFolder, FiMessageCircle, FiLogOut } from "react-icons/fi";
 import "./Sidebar.css";
 
-const Sidebar = () => {
+const Sidebar = ({ isOpen, closeSidebar }) => {
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -18,12 +19,15 @@ const Sidebar = () => {
   ];
 
   const handleLogout = () => {
-    // Clear auth tokens, etc.
     navigate("/login");
   };
 
+  const handleLinkClick = () => {
+    closeSidebar(); // close sidebar on link click (mobile)
+  };
+
   return (
-    <div className="sidebar">
+    <div className={`sidebar ${isOpen ? 'open' : ''}`}>
       <div className="sidebar-logo">
         <span className="logo-icon">👩‍💼</span>
         <span className="logo-text">WE Support</span>
@@ -34,6 +38,7 @@ const Sidebar = () => {
             key={item.path}
             to={item.path}
             className={`sidebar-link ${location.pathname === item.path ? "active" : ""}`}
+            onClick={handleLinkClick}
           >
             <span className="icon">{item.icon}</span>
             <span>{item.name}</span>

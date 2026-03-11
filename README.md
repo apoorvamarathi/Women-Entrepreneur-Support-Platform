@@ -7,6 +7,45 @@ A comprehensive full-stack application designed to empower women entrepreneurs b
 This project is a monorepo consisting of two main parts:
 
 - **Frontend:** A React application built with Vite, utilizing Material UI for styling and layout.
+
+## Frontend Implementation
+
+The frontend of the Women Entrepreneur Support Platform is built using **React with Vite** for fast development and **Material UI** for modern UI components.
+
+### Frontend Features
+
+- Responsive user interface built with React
+- Modern design using Material UI components
+- Client-side routing using React Router DOM
+- Role-based dashboard views
+- API integration with backend services
+- Form validation for user inputs
+- Protected routes for authenticated users
+
+### Frontend Pages
+
+The application contains the following main pages:
+
+- **Login Page** – Users can log in securely using their credentials.
+- **Register Page** – New users can create accounts and choose their role (Entrepreneur, Mentor, Investor).
+- **Dashboard** – Main user dashboard showing key information and quick access to features.
+- **Profile Page** – Users can view and update their profile details.
+- **Mentorship Page** – Entrepreneurs can browse mentors and send mentorship requests.
+- **Training Programs Page** – Displays available learning programs and resources.
+- **Funding Page** – Entrepreneurs can apply for funding opportunities and track applications.
+- **Events Page** – Shows upcoming networking events and webinars.
+- **Notifications Page** – Displays important updates and alerts for users.
+
+### Frontend Technologies
+
+- React
+- Vite
+- React Router DOM
+- Material UI
+- Axios (for API communication)
+
+### Frontend Folder Structure
+
 - **Backend:** A Node.js REST API built with Express, connected to a MongoDB database via Mongoose.
 
 ## Features

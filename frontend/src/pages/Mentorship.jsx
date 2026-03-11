@@ -53,6 +53,12 @@ const Mentorship = () => {
     { id: 4, mentor: "Lisa Chen", date: "May 5, 2025", time: "10:00 AM", topic: "Financial Projections" },
   ];
 
+  // Handler for request mentorship
+  const handleRequestMentorship = (mentorId, mentorName) => {
+    alert(`Mentorship request sent to ${mentorName}`);
+    // In a real app, you would call an API here
+  };
+
   // Filter mentors
   const filteredMentors = mentors.filter((mentor) => {
     const matchesSearch =
@@ -113,7 +119,13 @@ const Mentorship = () => {
             <p className="expertise">{mentor.expertise}</p>
             <p className="experience">Experience: {mentor.experience}</p>
             <p className="availability">Availability: {mentor.availability}</p>
-            <button className="btn-primary request-btn">Request Mentorship</button>
+            <button
+              type="button"
+              className="btn-primary request-btn"
+              onClick={() => handleRequestMentorship(mentor.id, mentor.name)}
+            >
+              Request Mentorship
+            </button>
           </div>
         ))}
       </div>
