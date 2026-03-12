@@ -1,55 +1,36 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import api from "../services/api";
 import "./Training.css";
 
 const Training = () => {
-  // Sample program data with schedule and completion status
-  const [programs, setPrograms] = useState([
-    {
-      id: 1,
-      title: "Digital Marketing",
-      trainer: "Alex Morgan",
-      duration: "3 weeks",
-      schedule: "Mon/Wed 6-8 PM",
-      enrolled: false,
-      completed: false,
-      certificate: null,
-    },
-    {
-      id: 2,
-      title: "Financial Management",
-      trainer: "John Smith",
-      duration: "4 weeks",
-      schedule: "Tue/Thu 5-7 PM",
-      enrolled: true,
-      completed: false,
-      certificate: null,
-    },
-    {
-      id: 3,
-      title: "Startup Growth Strategies",
-      trainer: "Lisa Ray",
-      duration: "6 weeks",
-      schedule: "Mon/Wed 4-6 PM",
-      enrolled: false,
-      completed: false,
-      certificate: null,
-    },
-    {
-      id: 4,
-      title: "Business Planning",
-      trainer: "David Chen",
-      duration: "2 weeks",
-      schedule: "Sat 10 AM-12 PM",
-      enrolled: true,
-      completed: true,
-      certificate: "business-planning-cert.pdf",
-    },
-  ]);
+  const [programs, setPrograms] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const handleEnroll = (id) => {
-    setPrograms(
-      programs.map((p) => (p.id === id ? { ...p, enrolled: true } : p))
-    );
+  useEffect(() => {
+    const fetchPrograms = async () => {
+      try {
+        const res = await api.get("/training");
+        setPrograms(res.data);
+      } catch (error) {
+        console.error("Failed to load training programs", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchPrograms();
+  }, []);
+
+  const handleEnroll = async (id) => {
+    try {
+      await api.post(`/training/${id}/enroll`);
+      setPrograms(
+        programs.map((p) => (p.id === id ? { ...p, enrolled: true } : p))
+      );
+      alert("Successfully enrolled!");
+    } catch (err) {
+      console.error(err);
+      alert(err.response?.data?.message || "Failed to enroll.");
+    }
   };
 
   // Derived data for sections

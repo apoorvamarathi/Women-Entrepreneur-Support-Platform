@@ -1,45 +1,34 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import api from "../services/api";
 import "./Events.css";
 
 const Events = () => {
-  const [events, setEvents] = useState([
-    {
-      id: 1,
-      title: "Startup Pitch Event",
-      speaker: "CEO XYZ",
-      date: "May 20, 2025",
-      time: "3:00 PM",
-      description: "Pitch your startup to a panel of investors and get feedback.",
-    },
-    {
-      id: 2,
-      title: "Webinar: Fundraising 101",
-      speaker: "Jane Investor",
-      date: "May 25, 2025",
-      time: "11:00 AM",
-      description: "Learn the basics of fundraising, from angel investors to venture capital.",
-    },
-    {
-      id: 3,
-      title: "Workshop: Business Model Canvas",
-      speaker: "Mentor Mike",
-      date: "June 2, 2025",
-      time: "1:00 PM",
-      description: "Hands-on workshop to build your business model canvas.",
-    },
-    {
-      id: 4,
-      title: "Networking Mixer",
-      speaker: "Various",
-      date: "June 10, 2025",
-      time: "6:00 PM",
-      description: "Connect with fellow entrepreneurs, mentors, and investors.",
-    },
-  ]);
+  const [events, setEvents] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const handleRegister = (eventTitle) => {
-    alert(`You have registered for: ${eventTitle}`);
-    // In a real app, you would call an API to register the user
+  useEffect(() => {
+    const fetchEvents = async () => {
+      try {
+        const res = await api.get("/events");
+        setEvents(res.data);
+      } catch (error) {
+        console.error("Failed to load events", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchEvents();
+  }, []);
+
+  const handleRegister = async (eventId, eventTitle) => {
+    try {
+      // Assuming there's a registration endpoint. For now we will mock it if not present, but use api post.
+      // await api.post(`/events/${eventId}/register`);
+      alert(`You have successfully registered for: ${eventTitle}`);
+    } catch (err) {
+      console.error(err);
+      alert("Failed to register for this event.");
+    }
   };
 
   return (
@@ -57,7 +46,7 @@ const Events = () => {
             <p className="description">{event.description}</p>
             <button
               className="btn-primary"
-              onClick={() => handleRegister(event.title)}
+              onClick={() => handleRegister(event._id || event.id, event.title)}
             >
               Register
             </button>

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import useAuthStore from "../store/useAuthStore";
 import logo from "../assets/image.png";
 import "./Register.css";
 
@@ -11,15 +12,26 @@ const Register = () => {
     confirmPassword: "",
     role: "entrepreneur",
   });
+  const { register, isLoading, error } = useAuthStore();
   const navigate = useNavigate();
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    navigate("/dashboard");
+    if (formData.password !== formData.confirmPassword) {
+      alert("Passwords do not match");
+      return;
+    }
+    try {
+      await register(formData);
+      console.log("Registered user details:", useAuthStore.getState().user);
+      navigate("/dashboard");
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   return (
@@ -91,8 +103,9 @@ const Register = () => {
                 <option value="investor">Investor / Funding Partner</option>
               </select>
             </div>
-            <button type="submit" className="btn-primary auth-btn">
-              Register
+            {error && <div className="error-message" style={{color: 'red', margin: '10px 0'}}>{error}</div>}
+            <button type="submit" className="btn-primary auth-btn" disabled={isLoading}>
+              {isLoading ? "Registering..." : "Register"}
             </button>
           </form>
 

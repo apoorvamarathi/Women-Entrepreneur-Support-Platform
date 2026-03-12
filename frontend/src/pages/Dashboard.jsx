@@ -1,5 +1,6 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import api from "../services/api";
 import { Bar, Line } from "react-chartjs-2";
 import {
   Chart as ChartJS,
@@ -31,39 +32,56 @@ ChartJS.register(
 );
 
 const Dashboard = () => {
+  const [data, setData] = useState({ stats: null, charts: null });
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchAnalytics = async () => {
+      try {
+        const res = await api.get("/analytics/dashboard");
+        setData(res.data);
+      } catch (error) {
+        console.error("Failed to load analytics", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchAnalytics();
+  }, []);
+
   // Stats cards for admin
   const stats = [
-    { label: "Total Entrepreneurs", value: "1,234", icon: <FiUsers />, color: "#6C63FF" },
-    { label: "Total Mentors", value: "56", icon: <FiUserCheck />, color: "#FF9F43" },
-    { label: "Funding Requests", value: "28", icon: <FiDollarSign />, color: "#28C76F" },
-    { label: "Training Participation", value: "342", icon: <FiBookOpen />, color: "#EA5455" },
+    { label: "Total Entrepreneurs", value: data.stats?.totalEntrepreneurs || 0, icon: <FiUsers />, color: "#6C63FF" },
+    { label: "Total Mentors", value: data.stats?.totalMentors || 0, icon: <FiUserCheck />, color: "#FF9F43" },
+    { label: "Funding Requests", value: data.stats?.totalFundingRequests || 0, icon: <FiDollarSign />, color: "#28C76F" },
+    { label: "Training Participation", value: data.stats?.totalTrainingPrograms || 0, icon: <FiBookOpen />, color: "#EA5455" },
   ];
 
   // Platform analytics (charts)
-  const userGrowthData = {
+  const userGrowthData = data.charts?.userGrowthData || {
     labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
     datasets: [
       {
         label: "Entrepreneurs",
-        data: [65, 78, 90, 112, 135, 150],
+        data: [0, 0, 0, 0, 0, 0],
         backgroundColor: "#6C63FF",
         borderRadius: 8,
       },
       {
         label: "Mentors",
-        data: [20, 25, 30, 35, 42, 48],
+        data: [0, 0, 0, 0, 0, 0],
         backgroundColor: "#FF9F43",
         borderRadius: 8,
       },
     ],
   };
 
-  const fundingTrendsData = {
+  const fundingTrendsData = data.charts?.fundingTrendsData || {
     labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
     datasets: [
       {
         label: "Funding Applications",
-        data: [12, 19, 15, 22, 24, 28],
+        data: [0, 0, 0, 0, 0, 0],
         borderColor: "#28C76F",
         backgroundColor: "rgba(40, 199, 111, 0.1)",
         tension: 0.4,
@@ -99,7 +117,7 @@ const Dashboard = () => {
       icon: <FiUserPlus />,
       color: "#6C63FF",
       action: "approve",
-      count: 12, // pending approvals
+      count: data.stats?.pendingApprovals || 0, // pending approvals
     },
     {
       id: 2,
@@ -108,7 +126,7 @@ const Dashboard = () => {
       icon: <FiUserCheck />,
       color: "#FF9F43",
       action: "assign",
-      count: 8, // pending assignments
+      count: data.stats?.pendingMentorshipRequests || 0, // pending assignments
     },
     {
       id: 3,
@@ -117,7 +135,7 @@ const Dashboard = () => {
       icon: <FiBookOpen />,
       color: "#28C76F",
       action: "manage-training",
-      count: 4, // active programs
+      count: data.stats?.totalTrainingPrograms || 0, // active programs
     },
     {
       id: 4,
@@ -126,7 +144,7 @@ const Dashboard = () => {
       icon: <FiDollarSign />,
       color: "#EA5455",
       action: "view-funding",
-      count: 28, // pending reviews
+      count: data.stats?.pendingFundingReviews || 0, // pending reviews
     },
     {
       id: 5,

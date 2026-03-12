@@ -1,16 +1,24 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import useAuthStore from "../store/useAuthStore";
 import logo from "../assets/image.png"; // adjust path to your logo
 import "./Login.css";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const { login, isLoading, error } = useAuthStore();
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    navigate("/dashboard");
+    try {
+      await login(email, password);
+      console.log("Logged in user details:", useAuthStore.getState().user);
+      navigate("/dashboard");
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   return (
@@ -49,8 +57,9 @@ const Login = () => {
                 required
               />
             </div>
-            <button type="submit" className="btn-primary auth-btn">
-              Login Securely
+            {error && <div className="error-message" style={{color: 'red', margin: '10px 0'}}>{error}</div>}
+            <button type="submit" className="btn-primary auth-btn" disabled={isLoading}>
+              {isLoading ? "Logging in..." : "Login Securely"}
             </button>
           </form>
 

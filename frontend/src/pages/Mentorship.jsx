@@ -1,48 +1,29 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import api from "../services/api";
 import "./Mentorship.css";
 
 const Mentorship = () => {
+  const [mentors, setMentors] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [industryFilter, setIndustryFilter] = useState("");
   const [experienceFilter, setExperienceFilter] = useState("");
 
-  // Mentor data with availability
-  const mentors = [
-    {
-      id: 1,
-      name: "Sarah Johnson",
-      expertise: "Tech Startup",
-      experience: "10 years",
-      availability: "Mon, Wed, Fri",
-      avatar: "👩",
-    },
-    {
-      id: 2,
-      name: "Priya Patel",
-      expertise: "Retail & E-commerce",
-      experience: "8 years",
-      availability: "Tue, Thu",
-      avatar: "👩🏽",
-    },
-    {
-      id: 3,
-      name: "Maria Garcia",
-      expertise: "Health & Wellness",
-      experience: "12 years",
-      availability: "Weekends",
-      avatar: "👩🏻",
-    },
-    {
-      id: 4,
-      name: "Lisa Chen",
-      expertise: "Financial Planning",
-      experience: "15 years",
-      availability: "Mon-Fri",
-      avatar: "👩🏼",
-    },
-  ];
+  useEffect(() => {
+    const fetchMentors = async () => {
+      try {
+        const res = await api.get("/mentorship/mentors");
+        setMentors(res.data);
+      } catch (error) {
+        console.error("Failed to fetch mentors", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchMentors();
+  }, []);
 
-  // Session data
+  // Session data (still mocked for UI structure until we build session endpoints)
   const upcomingSessions = [
     { id: 1, mentor: "Sarah Johnson", date: "May 25, 2025", time: "3:00 PM", topic: "Tech Startup Scaling" },
     { id: 2, mentor: "Priya Patel", date: "May 28, 2025", time: "11:00 AM", topic: "E-commerce Strategy" },
@@ -54,23 +35,38 @@ const Mentorship = () => {
   ];
 
   // Handler for request mentorship
-  const handleRequestMentorship = (mentorId, mentorName) => {
-    alert(`Mentorship request sent to ${mentorName}`);
-    // In a real app, you would call an API here
+  const handleRequestMentorship = async (mentorId, mentorName) => {
+    try {
+      // Create a request for tomorrow as a default for now. 
+      // A full implementation would likely open a modal to pick a date.
+      const tomorrow = new Date();
+      tomorrow.setDate(tomorrow.getDate() + 1);
+
+      await api.post("/mentorship/request", {
+        mentorId,
+        sessionDate: tomorrow.toISOString(),
+      });
+      alert(`Mentorship request sent to ${mentorName}`);
+    } catch (err) {
+      console.error(err);
+      alert(err.response?.data?.message || "Failed to request mentorship.");
+    }
   };
 
   // Filter mentors
   const filteredMentors = mentors.filter((mentor) => {
+    // Note: mentor.userId might be populated with { name, email } based on the backend
+    const mentorName = mentor.userId?.name || mentor.name || "Unknown Mentor";
     const matchesSearch =
-      mentor.name.toLowerCase().includes(search.toLowerCase()) ||
-      mentor.expertise.toLowerCase().includes(search.toLowerCase());
-    const matchesIndustry = industryFilter === "" || mentor.expertise.includes(industryFilter);
-    const matchesExperience = experienceFilter === "" || mentor.experience.includes(experienceFilter);
+      mentorName.toLowerCase().includes(search.toLowerCase()) ||
+      (mentor.expertise || "").toLowerCase().includes(search.toLowerCase());
+    const matchesIndustry = industryFilter === "" || (mentor.expertise && mentor.expertise.includes(industryFilter));
+    const matchesExperience = experienceFilter === "" || (mentor.experience && mentor.experience.toString().includes(experienceFilter));
     return matchesSearch && matchesIndustry && matchesExperience;
   });
 
   // Unique industries for filter dropdown
-  const industries = [...new Set(mentors.map((m) => m.expertise))];
+  const industries = [...new Set(mentors.map((m) => m.expertise).filter(Boolean))];
 
   return (
     <div className="mentorship-page">
