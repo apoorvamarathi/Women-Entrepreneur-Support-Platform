@@ -21,13 +21,14 @@ mongoose.connect(process.env.MONGO_URI)
 
 // Routes
 app.use('/api/auth', require('./routes/authRoutes'));
-// We will uncomment these as we build the sub-routers
+app.use('/api/analytics', require('./routes/analyticsRoutes'));
 app.use('/api/profile', require('./routes/profileRoutes'));
 app.use('/api/mentorship', require('./routes/mentorshipRoutes'));
 app.use('/api/training', require('./routes/trainingRoutes'));
 app.use('/api/funding', require('./routes/fundingRoutes'));
 app.use('/api/events', require('./routes/eventRoutes'));
 app.use('/api/notifications', require('./routes/notificationRoutes'));
+app.use('/api/community', require('./routes/communityRoutes'));
 
 const PORT = process.env.PORT || 5000;
 

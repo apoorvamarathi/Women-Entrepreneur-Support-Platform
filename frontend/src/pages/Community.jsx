@@ -1,46 +1,43 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import api from "../services/api";
 import "./Community.css";
 
 const Community = () => {
   const [question, setQuestion] = useState("");
-  const [posts, setPosts] = useState([
-    {
-      id: 1,
-      user: "Anjali",
-      text: "How to raise funding for a sustainable fashion brand?",
-      replies: 3,
-      time: "2 hours ago",
-    },
-    {
-      id: 2,
-      user: "Riya",
-      text: "Looking for a co-founder in ed-tech space.",
-      replies: 5,
-      time: "1 day ago",
-    },
-    {
-      id: 3,
-      user: "Meera",
-      text: "Any recommendations for good mentorship programs?",
-      replies: 2,
-      time: "3 days ago",
-    },
-  ]);
+  const [posts, setPosts] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  // Networking groups data
+  useEffect(() => {
+    const fetchPosts = async () => {
+      try {
+        const res = await api.get("/community/posts");
+        setPosts(res.data);
+      } catch (error) {
+        console.error("Failed to load community posts", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchPosts();
+  }, []);
+
+  // Networking groups data (Mocked until groups backend is implemented)
   const groups = [
     { id: 1, name: "Tech Startup Group", members: 234, description: "For women in tech startups" },
     { id: 2, name: "Women Founder Network", members: 567, description: "Connect with women founders" },
     { id: 3, name: "Startup Mentorship Circle", members: 189, description: "Find mentors and mentees" },
   ];
 
-  const handlePost = () => {
+  const handlePost = async () => {
     if (question.trim()) {
-      setPosts([
-        { id: Date.now(), user: "You", text: question, replies: 0, time: "Just now" },
-        ...posts,
-      ]);
-      setQuestion("");
+      try {
+        const res = await api.post("/community/posts", { text: question });
+        setPosts([res.data, ...posts]);
+        setQuestion("");
+      } catch (error) {
+        console.error("Failed to create post", error);
+        alert("Failed to submit post.");
+      }
     }
   };
 

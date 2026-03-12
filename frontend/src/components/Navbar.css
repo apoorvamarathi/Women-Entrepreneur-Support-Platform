@@ -41,3 +41,42 @@
     font-size: 1.4rem;
   }
 }
+
+.user-profile-section {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.user-avatar {
+  background: var(--primary-color, #6C63FF);
+  color: white;
+  min-width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 1.2rem;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.logout-btn {
+  background: none;
+  border: none;
+  color: var(--text-muted, #737373);
+  font-size: 20px;
+  cursor: pointer;
+  transition: color 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  border-radius: 8px;
+}
+
+.logout-btn:hover {
+  color: #EA5455;
+  background: rgba(234, 84, 85, 0.1);
+}

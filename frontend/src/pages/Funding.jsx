@@ -1,12 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import api from "../services/api";
 import "./Funding.css";
 
 const Funding = () => {
-  const [applications, setApplications] = useState([
-    { id: 1, startupName: "Eco Fashion", amount: 50000, status: "Pending", date: "2025-03-01" },
-    { id: 2, startupName: "TechEd", amount: 75000, status: "Approved", date: "2025-02-15" },
-    { id: 3, startupName: "HealthVibe", amount: 120000, status: "Rejected", date: "2025-02-28" },
-  ]);
+  const [applications, setApplications] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   const [formData, setFormData] = useState({
     startupName: "",
@@ -15,6 +13,20 @@ const Funding = () => {
     pitchDeck: null,
     financialProjections: null,
   });
+
+  useEffect(() => {
+    const fetchApplications = async () => {
+      try {
+        const res = await api.get("/funding");
+        setApplications(res.data);
+      } catch (error) {
+        console.error("Failed to load funding apps", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchApplications();
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -26,36 +38,45 @@ const Funding = () => {
     setFormData((prev) => ({ ...prev, [name]: files[0] }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    // Create new application object
-    const newApp = {
-      id: Date.now(), // simple unique id
-      startupName: formData.startupName,
-      amount: parseFloat(formData.amount),
-      status: "Pending",
-      date: new Date().toISOString().split('T')[0], // YYYY-MM-DD
-    };
+    try {
+      // In a real app, you would upload the file to S3/Cloudinary and get a URL.
+      // For now, we'll just mock the file URL behavior since the backend expects a pitchDeck string.
+      const pitchDeckName = formData.pitchDeck ? formData.pitchDeck.name : "mock_pitchdeck.pdf";
 
-    // Add to list
-    setApplications([...applications, newApp]);
+      const res = await api.post("/funding", {
+        amount: parseFloat(formData.amount),
+        pitchDeck: pitchDeckName,
+      });
 
-    // Reset form
-    setFormData({
-      startupName: "",
-      amount: "",
-      businessPlan: null,
-      pitchDeck: null,
-      financialProjections: null,
-    });
+      // The backend response doesn't give startupName directly since it's on the user or entrepreneur profile,
+      // but we can append it locally for the UI since this is the current user's submission.
+      const newApp = {
+        ...res.data,
+        startupName: formData.startupName, 
+        date: res.data.createdAt,
+      };
 
-    // Reset file inputs (optional, but good UX)
-    e.target.reset(); // resets the form including file inputs
+      setApplications([...applications, newApp]);
+      alert("Application submitted successfully!");
+
+      setFormData({
+        startupName: "",
+        amount: "",
+        businessPlan: null,
+        pitchDeck: null,
+        financialProjections: null,
+      });
+      e.target.reset();
+    } catch (err) {
+      console.error(err);
+      alert(err.response?.data?.message || "Failed to submit application.");
+    }
   };
 
-  // Format date for display
   const formatDate = (dateString) => {
+    if (!dateString) return "";
     const options = { day: '2-digit', month: '2-digit', year: 'numeric' };
     return new Date(dateString).toLocaleDateString('en-IN', options);
   };

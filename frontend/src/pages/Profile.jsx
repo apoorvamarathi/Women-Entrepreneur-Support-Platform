@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import api from "../services/api";
 import "./Profile.css";
 
 const Profile = () => {
@@ -11,6 +12,27 @@ const Profile = () => {
     description: "",
     documents: null,
   });
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const res = await api.get("/profile");
+        if (res.data.profile) {
+          setFormData((prev) => ({
+            ...prev,
+            ...res.data.profile,
+          }));
+        }
+      } catch (error) {
+        console.error("Failed to load profile", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchProfile();
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -21,10 +43,18 @@ const Profile = () => {
     setFormData((prev) => ({ ...prev, documents: e.target.files[0] }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Profile saved", formData);
-    // API call
+    setSaving(true);
+    try {
+      await api.put("/profile", formData);
+      alert("Profile saved successfully!");
+    } catch (error) {
+      console.error("Failed to save profile", error);
+      alert(error.response?.data?.message || "Failed to save profile.");
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (
@@ -110,7 +140,9 @@ const Profile = () => {
           {formData.documents && <p className="file-name">{formData.documents.name}</p>}
         </div>
 
-        <button type="submit" className="btn-primary">Save Profile</button>
+        <button type="submit" className="btn-primary" disabled={loading || saving}>
+          {saving ? "Saving..." : "Save Profile"}
+        </button>
       </form>
     </div>
   );
