@@ -1,0 +1,102 @@
+/* Resources.css */
+
+.resources-page {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.page-title {
+  font-size: 2rem;
+  font-weight: 600;
+  margin-bottom: 28px;
+  color: var(--text-dark);
+}
+
+/* Optional search bar */
+.search-bar {
+  margin-bottom: 32px;
+  max-width: 500px;
+}
+
+/* Sections */
+.resource-section {
+  margin-bottom: 48px;
+}
+
+.section-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 24px;
+  color: var(--text-dark);
+  border-bottom: 2px solid var(--primary);
+  padding-bottom: 8px;
+  display: inline-block;
+}
+
+.resources-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 24px;
+}
+
+.resource-card {
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.resource-card:hover {
+  transform: translateY(-4px);
+}
+
+.resource-card h3 {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 12px;
+  color: var(--text-dark);
+}
+
+.resource-description {
+  color: var(--text-gray);
+  font-size: 0.95rem;
+  line-height: 1.5;
+  margin-bottom: 20px;
+  flex: 1;
+}
+
+.btn-view,
+.btn-download {
+  border: none;
+  border-radius: 8px;
+  padding: 10px 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+  align-self: flex-start;
+  margin-top: auto;
+}
+
+.btn-view {
+  background: var(--primary);
+  color: white;
+}
+
+.btn-view:hover {
+  background: var(--primary-light);
+}
+
+.btn-download {
+  background: #28C76F;
+  color: white;
+}
+
+.btn-download:hover {
+  background: #20a35c;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .resources-grid {
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  }
+}

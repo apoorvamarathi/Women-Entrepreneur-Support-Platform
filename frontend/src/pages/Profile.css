@@ -1,0 +1,35 @@
+.profile-page {
+  max-width: 800px;
+}
+
+.page-title {
+  font-size: 2rem;
+  font-weight: 600;
+  margin-bottom: 28px;
+  color: var(--text-dark);
+}
+
+.profile-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.file-name {
+  margin-top: 8px;
+  font-size: 0.85rem;
+  color: var(--text-gray);
+}
+
+@media (max-width: 640px) {
+  .form-row {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+}

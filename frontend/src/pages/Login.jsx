@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import React, { useState } from "react";
 import {
   Container,
@@ -72,16 +73,26 @@ const StyledAvatar = styled(Box)(({ theme }) => ({
     color: "white",
   },
 }));
+=======
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import logo from "../assets/image.png"; // adjust path to your logo
+import "./Login.css";
+>>>>>>> 26287db13ed94247773cb52f848e945793dd35e2
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
+<<<<<<< HEAD
   const login = useAuthStore((state) => state.login);
   const { isLoading, error, clearError } = useAuthStore();
+=======
+>>>>>>> 26287db13ed94247773cb52f848e945793dd35e2
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+<<<<<<< HEAD
     clearError();
     try {
       await login(email, password);
@@ -89,66 +100,47 @@ const Login = () => {
     } catch (err) {
       console.error("Login failed", err);
     }
+=======
+    navigate("/dashboard");
+>>>>>>> 26287db13ed94247773cb52f848e945793dd35e2
   };
 
   return (
-    <GradientBackground>
-      <Container maxWidth="xs">
-        <Fade in timeout={800}>
-          <GlassPaper elevation={0}>
-            <LogoBox>
-              <StyledAvatar>
-                {/* Women Entrepreneur Logo: female symbol + briefcase */}
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="40"
-                  height="40"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <circle cx="12" cy="8" r="4" />
-                  <line x1="12" y1="12" x2="12" y2="20" />
-                  <line x1="8" y1="16" x2="16" y2="16" />
-                  <rect x="4" y="14" width="16" height="6" rx="1" />
-                  <line x1="8" y1="14" x2="8" y2="18" />
-                  <line x1="16" y1="14" x2="16" y2="18" />
-                </svg>
-              </StyledAvatar>
-              <Typography variant="h5" color="primary" gutterBottom>
-                Women Entrepreneur
-              </Typography>
-              <Typography variant="body2" color="textSecondary">
-                Support Platform
-              </Typography>
-            </LogoBox>
+    <div className="auth-container">
+      <div className="auth-card">
+        {/* Left side with logo */}
+        <div className="auth-left">
+          <img src={logo} alt="Women Entrepreneur" className="auth-logo" />
+        </div>
 
-            <form onSubmit={handleSubmit}>
-              <TextField
-                fullWidth
-                label="Email"
+        {/* Right side with form */}
+        <div className="auth-right">
+          <h1>Women Entrepreneur</h1>
+          <p className="subtitle">Connect</p>
+
+          <form onSubmit={handleSubmit}>
+            <div className="form-group">
+              <label>Email</label>
+              <input
                 type="email"
-                variant="outlined"
-                margin="normal"
+                className="input-field"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                placeholder="you@example.com"
                 required
-                sx={{ "& .MuiOutlinedInput-root": { borderRadius: 3 } }}
               />
-              <TextField
-                fullWidth
-                label="Password"
+            </div>
+            <div className="form-group">
+              <label>Password</label>
+              <input
                 type="password"
-                variant="outlined"
-                margin="normal"
+                className="input-field"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                placeholder="••••••••"
                 required
-                sx={{ "& .MuiOutlinedInput-root": { borderRadius: 3 } }}
               />
+<<<<<<< HEAD
               {error && (
                 <Typography color="error" variant="body2" sx={{ mt: 1, textAlign: 'center' }}>
                   {error}
@@ -180,47 +172,26 @@ const Login = () => {
               >
                 {isLoading ? 'Logging in...' : 'Log in'}
               </Button>
+=======
+            </div>
+            <button type="submit" className="btn-primary auth-btn">
+              Login Securely
+            </button>
+          </form>
+>>>>>>> 26287db13ed94247773cb52f848e945793dd35e2
 
-              <Box
-                sx={{
-                  mt: 2,
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                }}
-              >
-                <Link
-                  component={RouterLink}
-                  to="/forgot-password"
-                  variant="body2"
-                  sx={{
-                    color: "primary.main",
-                    textDecoration: "none",
-                    fontWeight: 500,
-                    "&:hover": { textDecoration: "underline" },
-                  }}
-                >
-                  Forgot password?
-                </Link>
-                <Link
-                  component={RouterLink}
-                  to="/register"
-                  variant="body2"
-                  sx={{
-                    color: "primary.main",
-                    textDecoration: "none",
-                    fontWeight: 500,
-                    "&:hover": { textDecoration: "underline" },
-                  }}
-                >
-                  Create account
-                </Link>
-              </Box>
-            </form>
-          </GlassPaper>
-        </Fade>
-      </Container>
-    </GradientBackground>
+          <div className="auth-links">
+            <Link to="/forgot-password" className="forgot-link">
+              Forgot Password?
+            </Link>
+          </div>
+
+          <div className="auth-footer">
+            Don't have an account? <Link to="/register">Register</Link>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 };
 

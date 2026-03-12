@@ -1,0 +1,16 @@
+/* Register.css */
+@import url('./Login.css');
+
+/* Additional styles if needed */
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+@media (max-width: 500px) {
+  .form-row {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+}

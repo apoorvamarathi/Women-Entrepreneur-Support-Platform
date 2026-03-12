@@ -1,0 +1,43 @@
+
+
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 0;
+  margin-bottom: 24px;
+}
+
+.navbar-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.mobile-menu-btn {
+  display: none; /* hidden by default */
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: var(--text-dark);
+}
+
+.navbar-left h2 {
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: var(--text-dark);
+  margin: 0;
+}
+
+/* ... rest of navbar styles ... */
+
+@media (max-width: 768px) {
+  .mobile-menu-btn {
+    display: block;
+  }
+  
+  .navbar-left h2 {
+    font-size: 1.4rem;
+  }
+}
