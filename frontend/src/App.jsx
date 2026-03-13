@@ -27,10 +27,11 @@ function App() {
           <Route path="/funding" element={<Funding />} />
           <Route path="/events" element={<Events />} />
           <Route path="/resources" element={<Resources />} />
+          
           <Route path="/community" element={<Community />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
         </Route>
-        <Route path="/" element={<Navigate to="/dashboard" replace />} />
+        <Route path="/" element={<Navigate to="/login" replace />} />
       </Routes>
     </BrowserRouter>
   );

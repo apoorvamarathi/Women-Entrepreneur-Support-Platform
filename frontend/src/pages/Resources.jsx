@@ -114,20 +114,33 @@ const Resources = () => {
     },
   ];
 
-  const handleResourceAction = (resource) => {
-    if (resource.type === "view") {
-      // In a real app, you might navigate to a detail page
-      alert(`Viewing: ${resource.title} - This would open the resource page.`);
-      // Example: navigate(resource.link); if using react-router
-    } else if (resource.type === "download") {
-      // Simulate download
-      alert(`Downloading: ${resource.title} - This would start a file download.`);
-      // In a real app, you could trigger file download:
-      // const link = document.createElement('a');
-      // link.href = resource.fileUrl;
-      // link.download = resource.title;
-      // link.click();
-    }
+  const [selectedResource, setSelectedResource] = useState(null);
+  const [modalType, setModalType] = useState(null); // 'view' or 'download'
+
+  const openModal = (resource, actionType) => {
+    setSelectedResource(resource);
+    setModalType(actionType);
+  };
+
+  const closeModal = () => {
+    setSelectedResource(null);
+    setModalType(null);
+  };
+
+  // Trigger file download (for download action)
+  const handleDownload = (resource) => {
+    // Create a simple text file with resource details
+    const content = `Title: ${resource.title}\nDescription: ${resource.description}\n\nThis is a sample file. In a real app, you would serve the actual file from ${resource.fileUrl || 'a server path'}.`;
+    const blob = new Blob([content], { type: "text/plain" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `${resource.title.replace(/\s+/g, '_')}.txt`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+    closeModal(); // close modal after download starts
   };
 
   return (
@@ -145,7 +158,7 @@ const Resources = () => {
                   <p className="resource-description">{resource.description}</p>
                   <button
                     className={`btn-${resource.type}`}
-                    onClick={() => handleResourceAction(resource)}
+                    onClick={() => openModal(resource, resource.type)}
                   >
                     {resource.type === "view" ? "View" : "Download"}
                   </button>
@@ -155,6 +168,47 @@ const Resources = () => {
           </div>
         ))}
       </div>
+
+      {/* Modal for resource details */}
+      {selectedResource && (
+        <div className="modal-overlay" onClick={closeModal}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <h2>{selectedResource.title}</h2>
+            <p className="modal-description">{selectedResource.description}</p>
+            
+            {/* Placeholder detailed content */}
+            <div className="modal-detail">
+              <h3>Details</h3>
+              <p>
+                This is a detailed view of "{selectedResource.title}". 
+                In a real application, you would load the actual content 
+                (guide steps, video transcript, scheme eligibility, etc.) 
+                from a backend or a static file.
+              </p>
+              <p>
+                <strong>Type:</strong> {modalType === 'view' ? 'Viewable resource' : 'Downloadable file'}
+              </p>
+              {modalType === 'download' && selectedResource.fileUrl && (
+                <p><strong>File:</strong> {selectedResource.fileUrl}</p>
+              )}
+            </div>
+
+            <div className="modal-actions">
+              {modalType === 'download' && (
+                <button
+                  className="btn-download"
+                  onClick={() => handleDownload(selectedResource)}
+                >
+                  Download File
+                </button>
+              )}
+              <button className="btn-close" onClick={closeModal}>
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
