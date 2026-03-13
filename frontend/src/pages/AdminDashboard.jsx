@@ -31,7 +31,7 @@ ChartJS.register(
   Legend
 );
 
-const Dashboard = () => {
+const AdminDashboard = () => {
   const [data, setData] = useState({ stats: null, charts: null });
   const [loading, setLoading] = useState(true);
 
@@ -232,4 +232,4 @@ const Dashboard = () => {
   );
 };
 
-export default Dashboard;
+export default AdminDashboard;
