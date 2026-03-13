@@ -1,23 +1,40 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { FiBell, FiMenu, FiLogOut } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
+import api from "../services/api";
 import useAuthStore from "../store/useAuthStore";
 import "./Navbar.css";
 
 const Navbar = ({ toggleSidebar }) => {
   const [showNotifications, setShowNotifications] = useState(false);
+  const [notifications, setNotifications] = useState([]);
+  const [loading, setLoading] = useState(false);
   const { user, logout } = useAuthStore();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchNotifications = async () => {
+      try {
+        setLoading(true);
+        const res = await api.get('/notifications');
+        setNotifications(res.data);
+      } catch (error) {
+        console.error("Failed to load notifications", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (showNotifications) {
+      fetchNotifications();
+    }
+  }, [showNotifications]);
 
   const handleLogout = () => {
     logout();
     navigate("/login");
   };
-
-  const notifications = [
-    { id: 1, message: "Welcome to the platform!", time: "Just now" },
-  ];
 
   return (
     <div className="navbar">
@@ -32,12 +49,18 @@ const Navbar = ({ toggleSidebar }) => {
           <FiBell className="bell-icon" onClick={() => setShowNotifications(!showNotifications)} />
           {showNotifications && (
             <div className="notification-dropdown">
-              {notifications.map((n) => (
-                <div key={n.id} className="notification-item">
-                  <p>{n.message}</p>
-                  <span>{n.time}</span>
-                </div>
-              ))}
+              {loading ? (
+                <p style={{ padding: '10px' }}>Loading...</p>
+              ) : notifications.length === 0 ? (
+                <p style={{ padding: '10px' }}>No notifications</p>
+              ) : (
+                notifications.map((n) => (
+                  <div key={n._id || n.id} className="notification-item">
+                    <p>{n.message}</p>
+                    <span>{new Date(n.createdAt).toLocaleDateString()}</span>
+                  </div>
+                ))
+              )}
             </div>
           )}
         </div>

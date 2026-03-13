@@ -9,9 +9,19 @@ const eventSchema = new mongoose.Schema({
 
   description: String,
 
-  date: Date,
+  date: {
+    type: Date,
+    required: true
+  },
 
-  speaker: String
+  time: String,
+
+  speaker: String,
+
+  registeredUsers: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User"
+  }]
 
 }, { timestamps: true });
 

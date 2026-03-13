@@ -1,15 +1,28 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import api from "../services/api";
 import logo from "../assets/image.png";
 import "./ForgotPassword.css";
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setSubmitted(true);
+    setLoading(true);
+    setError("");
+    try {
+      await api.post('/auth/forgot-password', { email });
+      setSubmitted(true);
+    } catch (err) {
+      setError(err.response?.data?.message || "Failed to process request");
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -35,8 +48,9 @@ const ForgotPassword = () => {
                   required
                 />
               </div>
-              <button type="submit" className="btn-primary auth-btn">
-                Send Reset Link
+              {error && <div className="error-message" style={{color: 'red', margin: '10px 0'}}>{error}</div>}
+              <button type="submit" className="btn-primary auth-btn" disabled={loading}>
+                {loading ? "Sending..." : "Send Reset Link"}
               </button>
             </form>
           ) : (

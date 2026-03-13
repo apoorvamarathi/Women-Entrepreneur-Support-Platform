@@ -5,28 +5,28 @@ import "./Community.css";
 const Community = () => {
   const [question, setQuestion] = useState("");
   const [posts, setPosts] = useState([]);
+  const [groups, setGroups] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [replyText, setReplyText] = useState({});
+  const [expandedPostId, setExpandedPostId] = useState(null);
 
   useEffect(() => {
-    const fetchPosts = async () => {
+    const fetchData = async () => {
       try {
-        const res = await api.get("/community/posts");
-        setPosts(res.data);
+        const [postsRes, groupsRes] = await Promise.all([
+          api.get("/community/posts"),
+          api.get("/community/groups")
+        ]);
+        setPosts(postsRes.data);
+        setGroups(groupsRes.data);
       } catch (error) {
-        console.error("Failed to load community posts", error);
+        console.error("Failed to load community data", error);
       } finally {
         setLoading(false);
       }
     };
-    fetchPosts();
+    fetchData();
   }, []);
-
-  // Networking groups data (Mocked until groups backend is implemented)
-  const groups = [
-    { id: 1, name: "Tech Startup Group", members: 234, description: "For women in tech startups" },
-    { id: 2, name: "Women Founder Network", members: 567, description: "Connect with women founders" },
-    { id: 3, name: "Startup Mentorship Circle", members: 189, description: "Find mentors and mentees" },
-  ];
 
   const handlePost = async () => {
     if (question.trim()) {
@@ -41,9 +41,33 @@ const Community = () => {
     }
   };
 
-  const handleReply = (postId) => {
-    // For demo, just alert
-    alert(`Reply to post #${postId} - This would open a reply form.`);
+  const handleReply = async (postId) => {
+    const reply = replyText[postId];
+    if (!reply || reply.trim() === "") {
+      alert("Please enter a reply");
+      return;
+    }
+
+    try {
+      await api.post(`/community/posts/${postId}/reply`, { text: reply });
+      // Update the post with the new reply
+      setPosts(posts.map(post => {
+        if (post.id === postId) {
+          return {
+            ...post,
+            replies: [...(post.replies || []), { text: reply }],
+            repliesCount: (post.repliesCount || 0) + 1
+          };
+        }
+        return post;
+      }));
+      // Clear the reply input
+      setReplyText({ ...replyText, [postId]: "" });
+      setExpandedPostId(null);
+    } catch (error) {
+      console.error("Failed to reply to post", error);
+      alert(error.response?.data?.message || "Failed to post reply");
+    }
   };
 
   const handleJoinGroup = (groupName) => {
@@ -79,13 +103,47 @@ const Community = () => {
                   <span className="post-time">{post.time}</span>
                 </div>
                 <p className="post-text">{post.text}</p>
+                
+                {/* Show replies if expanded */}
+                {expandedPostId === post.id && post.replies && post.replies.length > 0 && (
+                  <div className="replies-section" style={{ marginTop: '10px', paddingLeft: '20px', borderLeft: '2px solid #ddd' }}>
+                    {post.replies.map((reply, idx) => (
+                      <div key={idx} style={{ marginBottom: '10px', fontSize: '0.9em' }}>
+                        <strong>{reply.userId?.name || 'Anonymous'}</strong>
+                        <p>{reply.text}</p>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {/* Reply form */}
+                {expandedPostId === post.id && (
+                  <div className="reply-form" style={{ marginTop: '10px' }}>
+                    <textarea
+                      value={replyText[post.id] || ""}
+                      onChange={(e) => setReplyText({ ...replyText, [post.id]: e.target.value })}
+                      placeholder="Write a reply..."
+                      rows="2"
+                      className="input-field"
+                      style={{ width: '100%' }}
+                    />
+                    <button
+                      className="btn-primary"
+                      onClick={() => handleReply(post.id)}
+                      style={{ marginTop: '5px' }}
+                    >
+                      Post Reply
+                    </button>
+                  </div>
+                )}
+
                 <div className="post-footer">
-                  <span className="post-replies">{post.replies} replies</span>
+                  <span className="post-replies">{post.repliesCount || 0} replies</span>
                   <button
                     className="reply-btn"
-                    onClick={() => handleReply(post.id)}
+                    onClick={() => setExpandedPostId(expandedPostId === post.id ? null : post.id)}
                   >
-                    Reply
+                    {expandedPostId === post.id ? "Hide" : "Reply"}
                   </button>
                 </div>
               </div>

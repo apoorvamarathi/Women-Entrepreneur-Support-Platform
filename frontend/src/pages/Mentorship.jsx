@@ -8,31 +8,29 @@ const Mentorship = () => {
   const [search, setSearch] = useState("");
   const [industryFilter, setIndustryFilter] = useState("");
   const [experienceFilter, setExperienceFilter] = useState("");
+  const [upcomingSessions, setUpcomingSessions] = useState([]);
+  const [previousSessions, setPreviousSessions] = useState([]);
 
   useEffect(() => {
-    const fetchMentors = async () => {
+    const fetchData = async () => {
       try {
-        const res = await api.get("/mentorship/mentors");
-        setMentors(res.data);
+        const [mentorsRes, sessionsRes] = await Promise.all([
+          api.get("/mentorship/mentors"),
+          api.get("/mentorship/sessions")
+        ]);
+        setMentors(mentorsRes.data);
+        if (sessionsRes.data) {
+          setUpcomingSessions(sessionsRes.data.upcoming || []);
+          setPreviousSessions(sessionsRes.data.previous || []);
+        }
       } catch (error) {
-        console.error("Failed to fetch mentors", error);
+        console.error("Failed to fetch mentorship data", error);
       } finally {
         setLoading(false);
       }
     };
-    fetchMentors();
+    fetchData();
   }, []);
-
-  // Session data (still mocked for UI structure until we build session endpoints)
-  const upcomingSessions = [
-    { id: 1, mentor: "Sarah Johnson", date: "May 25, 2025", time: "3:00 PM", topic: "Tech Startup Scaling" },
-    { id: 2, mentor: "Priya Patel", date: "May 28, 2025", time: "11:00 AM", topic: "E-commerce Strategy" },
-  ];
-
-  const previousSessions = [
-    { id: 3, mentor: "Maria Garcia", date: "May 10, 2025", time: "2:00 PM", topic: "Wellness Business Model" },
-    { id: 4, mentor: "Lisa Chen", date: "May 5, 2025", time: "10:00 AM", topic: "Financial Projections" },
-  ];
 
   // Handler for request mentorship
   const handleRequestMentorship = async (mentorId, mentorName) => {
@@ -55,18 +53,17 @@ const Mentorship = () => {
 
   // Filter mentors
   const filteredMentors = mentors.filter((mentor) => {
-    // Note: mentor.userId might be populated with { name, email } based on the backend
-    const mentorName = mentor.userId?.name || mentor.name || "Unknown Mentor";
+    const mentorName = mentor.userId?.name || 'Unknown Mentor';
     const matchesSearch =
       mentorName.toLowerCase().includes(search.toLowerCase()) ||
-      (mentor.expertise || "").toLowerCase().includes(search.toLowerCase());
-    const matchesIndustry = industryFilter === "" || (mentor.expertise && mentor.expertise.includes(industryFilter));
+      (mentor.industryExpertise?.join(', ') || '').toLowerCase().includes(search.toLowerCase());
+    const matchesIndustry = industryFilter === "" || (mentor.industryExpertise && mentor.industryExpertise.includes(industryFilter));
     const matchesExperience = experienceFilter === "" || (mentor.experience && mentor.experience.toString().includes(experienceFilter));
     return matchesSearch && matchesIndustry && matchesExperience;
   });
 
   // Unique industries for filter dropdown
-  const industries = [...new Set(mentors.map((m) => m.expertise).filter(Boolean))];
+  const industries = [...new Set(mentors.map((m) => m.industryExpertise).filter(Boolean).flat())];
 
   return (
     <div className="mentorship-page">
@@ -109,16 +106,17 @@ const Mentorship = () => {
       {/* Mentor Cards Grid */}
       <div className="mentor-grid">
         {filteredMentors.map((mentor) => (
-          <div className="mentor-card card" key={mentor.id}>
-            <div className="mentor-avatar">{mentor.avatar}</div>
-            <h3>{mentor.name}</h3>
-            <p className="expertise">{mentor.expertise}</p>
-            <p className="experience">Experience: {mentor.experience}</p>
-            <p className="availability">Availability: {mentor.availability}</p>
+          <div className="mentor-card card" key={mentor._id || mentor.id}>
+            <div className="mentor-avatar">{mentor.userId?.name?.charAt(0).toUpperCase() || '👩'}</div>
+            <h3>{mentor.userId?.name || 'Unknown Mentor'}</h3>
+            <p className="expertise">{mentor.industryExpertise?.join(', ') || 'Not specified'}</p>
+            <p className="experience">Experience: {mentor.experience || 0} years</p>
+            <p className="availability">{mentor.availability ? '✓ Available' : '✗ Not Available'}</p>
             <button
               type="button"
               className="btn-primary request-btn"
-              onClick={() => handleRequestMentorship(mentor.id, mentor.name)}
+              onClick={() => handleRequestMentorship(mentor._id, mentor.userId?.name)}
+              disabled={!mentor.availability}
             >
               Request Mentorship
             </button>
@@ -137,12 +135,15 @@ const Mentorship = () => {
               <p>No upcoming sessions.</p>
             ) : (
               <ul>
-                {upcomingSessions.map((s) => (
-                  <li key={s.id} className="session-item">
-                    <strong>{s.mentor}</strong> – {s.topic}
-                    <span>{s.date} at {s.time}</span>
-                  </li>
-                ))}
+                {upcomingSessions.map((s) => {
+                  const dateObj = new Date(s.time || s.sessionDate || s.date);
+                  return (
+                    <li key={s.id} className="session-item">
+                      <strong>{s.mentor}</strong> – {s.status}
+                      <span>{dateObj.toLocaleString()}</span>
+                    </li>
+                  );
+                })}
               </ul>
             )}
           </div>
@@ -154,12 +155,16 @@ const Mentorship = () => {
               <p>No previous sessions.</p>
             ) : (
               <ul>
-                {previousSessions.map((s) => (
-                  <li key={s.id} className="session-item">
-                    <strong>{s.mentor}</strong> – {s.topic}
-                    <span>{s.date} at {s.time}</span>
-                  </li>
-                ))}
+                {previousSessions.map((s) => {
+                  const dateObj = new Date(s.time || s.sessionDate || s.date);
+                  return (
+                    <li key={s.id} className="session-item">
+                      <strong>{s.mentor}</strong> – {s.status}
+                      <span>{dateObj.toLocaleString()}</span>
+                      {s.notes && <p className="session-notes">Notes: {s.notes}</p>}
+                    </li>
+                  );
+                })}
               </ul>
             )}
           </div>

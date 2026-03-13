@@ -10,6 +10,17 @@ const forumPostSchema = new mongoose.Schema({
     type: String,
     required: true
   },
+  replies: [{
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User"
+    },
+    text: String,
+    createdAt: {
+      type: Date,
+      default: Date.now
+    }
+  }],
   repliesInfo: {
     type: Number,
     default: 0
