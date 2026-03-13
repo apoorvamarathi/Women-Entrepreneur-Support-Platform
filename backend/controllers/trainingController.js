@@ -40,6 +40,11 @@ const createTrainingProgram = async (req, res) => {
   try {
     const { title, description, trainer, duration, schedule } = req.body;
 
+    // Validation
+    if (!title || !trainer || !duration) {
+      return res.status(400).json({ message: 'Title, trainer, and duration are required' });
+    }
+
     const program = await TrainingProgram.create({
       title,
       description,

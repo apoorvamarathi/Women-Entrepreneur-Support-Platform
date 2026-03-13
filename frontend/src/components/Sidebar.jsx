@@ -1,11 +1,13 @@
 
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { FiGrid, FiUser, FiUsers, FiBookOpen, FiDollarSign, FiCalendar, FiFolder, FiMessageCircle, FiLogOut } from "react-icons/fi";
+import useAuthStore from "../store/useAuthStore";
 import "./Sidebar.css";
 
 const Sidebar = ({ isOpen, closeSidebar }) => {
   const location = useLocation();
   const navigate = useNavigate();
+  const { logout } = useAuthStore();
 
   const menuItems = [
     { path: "/dashboard", name: "Dashboard", icon: <FiGrid /> },
@@ -19,6 +21,7 @@ const Sidebar = ({ isOpen, closeSidebar }) => {
   ];
 
   const handleLogout = () => {
+    logout();
     navigate("/login");
   };
 

@@ -1,4 +1,5 @@
 const FundingApplication = require('../models/FundingApplication');
+const { createNotification } = require('../utils/notificationHelper');
 
 // @desc    Get all funding applications (for investors/admins)
 // @route   GET /api/funding
@@ -20,6 +21,11 @@ const createFundingApplication = async (req, res) => {
   try {
     const { amount, pitchDeck } = req.body;
 
+    // Validation
+    if (!amount || amount <= 0) {
+      return res.status(400).json({ message: 'Valid funding amount is required' });
+    }
+
     if (req.user.role !== 'entrepreneur') {
       return res.status(403).json({ message: 'Only entrepreneurs can apply for funding' });
     }
@@ -29,6 +35,9 @@ const createFundingApplication = async (req, res) => {
       amount,
       pitchDeck
     });
+
+    // Send notification to entrepreneur
+    await createNotification(req.user.id, `Your funding application for $${amount} has been submitted. We'll review it shortly!`);
 
     res.status(201).json(application);
   } catch (error) {
@@ -43,6 +52,11 @@ const updateFundingApplication = async (req, res) => {
   try {
     const { status } = req.body;
 
+    // Validation
+    if (!status || !['pending', 'approved', 'rejected'].includes(status)) {
+      return res.status(400).json({ message: 'Valid status is required' });
+    }
+
     if (req.user.role !== 'investor' && req.user.role !== 'admin') {
       return res.status(403).json({ message: 'Not authorized to update application status' });
     }
@@ -55,6 +69,10 @@ const updateFundingApplication = async (req, res) => {
 
     application.status = status;
     const updatedApplication = await application.save();
+
+    // Send notification to entrepreneur about status change
+    const statusMessage = status === 'approved' ? 'approved! Congratulations!' : `${status}. Better luck next time!`;
+    await createNotification(application.entrepreneurId, `Your funding application has been ${statusMessage}`);
 
     res.status(200).json(updatedApplication);
   } catch (error) {
