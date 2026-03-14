@@ -61,7 +61,7 @@ import Community from "./pages/Community";
 function App() {
   // This would normally come from your auth context
   // For now, let's assume we have the user role
-  const userRole = localStorage.getItem("userRole")||'enterpreneur'; // Change this to test different roles
+  const userRole = localStorage.getItem("userRole")||'mentor'; // Change this to test different roles
   
   // Function to get the correct dashboard based on role
   const getDashboardComponent = () => {
