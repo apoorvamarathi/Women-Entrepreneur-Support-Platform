@@ -101,7 +101,7 @@ function App() {
         </Route>
 
         {/* Redirect root to dashboard */}
-        <Route path="/" element={<Navigate to="/dashboard" replace />} />
+        <Route path="/" element={<Navigate to="/Login" replace />} />
       </Routes>
     </BrowserRouter>
   );

@@ -113,7 +113,7 @@ const Login = () => {
       }
       
       // Navigate to dashboard
-      navigate("/AdminDashboard");
+      navigate("/dashboard");
     } catch (err) {
       console.error(err);
     }
