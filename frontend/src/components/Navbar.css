@@ -21,6 +21,8 @@
   font-size: 24px;
   cursor: pointer;
   color: var(--text-dark);
+  margin-right: 16px;
+  padding:4px 8px;
 }
 
 .navbar-left h2 {

@@ -1,19 +1,6 @@
 /* AdminDashboard.css */
 
-.admin-dashboard {
-  width: 100%;
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 0 4px;
-  box-sizing: border-box;
-}
-
-.page-title {
-  font-size: 2rem;
-  font-weight: 600;
-  margin-bottom: 28px;
-  color: var(--text-dark);
-}
+/* Dashboard.css - Shared styles for all dashboards */
 
 /* Stats grid */
 .stats-grid {
@@ -30,6 +17,9 @@
   gap: 16px;
   padding: 20px;
   min-width: 0;
+  background: var(--card-bg);
+  border-radius: 20px;
+  box-shadow: var(--shadow);
 }
 
 .stat-icon {
@@ -63,7 +53,58 @@
   line-height: 1.2;
 }
 
-/* Charts grid */
+/* Quick actions section */
+.quick-actions {
+  width: 100%;
+  margin-top: 32px;
+}
+
+.quick-actions h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 24px;
+  color: var(--text-dark);
+}
+
+.actions-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 24px;
+  width: 100%;
+}
+
+.action-card {
+  padding: 24px;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  border-radius: 16px;
+  background: var(--card-bg);
+  box-shadow: var(--shadow);
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
+.action-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-hover);
+}
+
+.action-card h3 {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: var(--text-dark);
+}
+
+.action-card p {
+  color: var(--text-gray);
+  font-size: 0.9rem;
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* Charts grid (for admin) */
 .charts-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
@@ -74,8 +115,9 @@
 
 .chart-card {
   padding: 20px;
-  width: 100%;
-  box-sizing: border-box;
+  background: var(--card-bg);
+  border-radius: 20px;
+  box-shadow: var(--shadow);
 }
 
 .chart-card h3 {
@@ -91,79 +133,6 @@
   position: relative;
 }
 
-/* Admin controls - redesigned */
-.admin-controls {
-  width: 100%;
-}
-
-.admin-controls h2 {
-  font-size: 1.5rem;
-  font-weight: 600;
-  margin-bottom: 24px;
-  color: var(--text-dark);
-}
-
-.actions-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 24px;
-  width: 100%;
-}
-
-.action-card {
-  padding: 24px;
-  cursor: pointer;
-  transition: transform 0.2s, box-shadow 0.2s;
-  min-width: 0;
-  position: relative;
-  border-radius: 16px;
-  background: white;
-}
-
-.action-card:hover {
-  transform: translateY(-4px);
-  box-shadow: var(--shadow-hover);
-}
-
-.action-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 16px;
-}
-
-.action-icon {
-  width: 56px;
-  height: 56px;
-  border-radius: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 28px;
-}
-
-.action-badge {
-  background: var(--primary);
-  color: white;
-  border-radius: 20px;
-  padding: 4px 12px;
-  font-size: 0.9rem;
-  font-weight: 600;
-}
-
-.action-card h3 {
-  font-size: 1.2rem;
-  font-weight: 600;
-  margin-bottom: 8px;
-  color: var(--text-dark);
-}
-
-.action-description {
-  color: var(--text-gray);
-  font-size: 0.9rem;
-  line-height: 1.5;
-}
-
 /* Responsive */
 @media (max-width: 1024px) {
   .stats-grid {
@@ -176,7 +145,7 @@
     grid-template-columns: 1fr;
   }
   .actions-grid {
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   }
 }
 
@@ -191,3 +160,4 @@
     white-space: normal;
   }
 }
+

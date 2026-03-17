@@ -165,7 +165,7 @@ const AdminDashboard = () => {
   ];
 
   const handleAdminAction = (action) => {
-    alert(`Action: ${action} – This would open the appropriate admin panel.`);
+    alert(`Action: ${action} - This would open the appropriate admin panel.`);
     // In a real app, navigate to specific admin pages or open modals.
   };
 

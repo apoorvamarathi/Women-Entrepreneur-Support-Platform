@@ -29,6 +29,7 @@ app.use('/api/funding', require('./routes/fundingRoutes'));
 app.use('/api/events', require('./routes/eventRoutes'));
 app.use('/api/notifications', require('./routes/notificationRoutes'));
 app.use('/api/community', require('./routes/communityRoutes'));
+app.use('/api/admin', require('./routes/adminRoutes'));
 
 const PORT = process.env.PORT || 5000;
 

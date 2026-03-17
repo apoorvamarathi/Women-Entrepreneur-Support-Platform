@@ -17,7 +17,7 @@ const userSchema = new mongoose.Schema({
   },
   role: {
     type: String,
-    enum: ['entrepreneur', 'mentor', 'investor'],
+    enum: ['entrepreneur', 'mentor', 'investor','admin'],
     default: 'entrepreneur',
   },
 }, {
@@ -41,3 +41,4 @@ userSchema.methods.matchPassword = async function (enteredPassword) {
 
 const User = mongoose.model('User', userSchema);
 module.exports = User;
+

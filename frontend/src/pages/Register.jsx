@@ -27,6 +27,12 @@ const Register = () => {
     }
     try {
       await register(formData);
+      //added this
+      const user = useAuthStore.getState().user;
+      if(user && user.role){
+        localStorage.setItem('userRole',user.role);
+        console.log("User role saved:",user.role);
+      }
       console.log("Registered user details:", useAuthStore.getState().user);
       navigate("/dashboard");
     } catch (err) {
@@ -98,6 +104,7 @@ const Register = () => {
             <div className="form-group">
               <label>I am a</label>
               <select name="role" className="input-field" value={formData.role} onChange={handleChange}>
+                <option value="admin">Admin (Dev Only)</option>
                 <option value="entrepreneur">Women Entrepreneur</option>
                 <option value="mentor">Mentor / Industry Expert</option>
                 <option value="investor">Investor / Funding Partner</option>
