@@ -24,7 +24,7 @@ const Events = () => {
     try {
       await api.post(`/events/${eventId}/register`);
       alert(`You have successfully registered for: ${eventTitle}`);
-      // Optionally refresh the events list or update the event in state
+      
     } catch (err) {
       console.error(err);
       alert(err.response?.data?.message || "Failed to register for this event.");
