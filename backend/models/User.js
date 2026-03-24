@@ -20,6 +20,11 @@ const userSchema = new mongoose.Schema({
     enum: ['entrepreneur', 'mentor', 'investor','admin'],
     default: 'entrepreneur',
   },
+  status: {
+    type: String,
+    enum: ['active', 'suspended', 'pending'],
+    default: 'active',
+  },
 }, {
   timestamps: true,
 });

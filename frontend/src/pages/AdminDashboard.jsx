@@ -1,5 +1,6 @@
 
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import api from "../services/api";
 import { Bar, Line } from "react-chartjs-2";
 import {
@@ -164,9 +165,16 @@ const AdminDashboard = () => {
     },
   ];
 
+  const navigate = useNavigate();
+
   const handleAdminAction = (action) => {
-    alert(`Action: ${action} - This would open the appropriate admin panel.`);
-    // In a real app, navigate to specific admin pages or open modals.
+    if (action === "assign") {
+      navigate("/admin/mentors");
+    } else if (action === "view-funding") {
+      navigate("/funding-review");
+    } else {
+      alert(`Action: ${action} - This would open the appropriate admin panel.`);
+    }
   };
 
   return (

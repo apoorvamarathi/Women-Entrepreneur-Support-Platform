@@ -1,121 +1,45 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import api from "../services/api";
 import "./Resources.css";
 
 const Resources = () => {
-  // Sample resource data grouped by category
-  const resourceSections = [
-    {
-      id: "guides",
-      title: "Business Guides",
-      resources: [
-        {
-          id: 1,
-          title: "How to Start a Business",
-          description: "Step-by-step guide for launching your startup.",
-          type: "view",
-          link: "/resources/start-business-guide", // placeholder for actual link
-        },
-        {
-          id: 2,
-          title: "Marketing 101",
-          description: "Essential marketing strategies for small businesses.",
-          type: "view",
-          link: "/resources/marketing-101",
-        },
-        {
-          id: 3,
-          title: "Legal Basics for Entrepreneurs",
-          description: "Understand contracts, licenses, and compliance.",
-          type: "view",
-          link: "/resources/legal-basics",
-        },
-      ],
-    },
-    {
-      id: "templates",
-      title: "Startup Templates",
-      resources: [
-        {
-          id: 4,
-          title: "Business Plan Template",
-          description: "Editable template to create your business plan.",
-          type: "download",
-          fileUrl: "/templates/business-plan-template.docx", // placeholder file path
-        },
-        {
-          id: 5,
-          title: "Financial Projection Spreadsheet",
-          description: "Excel sheet for revenue and expense forecasting.",
-          type: "download",
-          fileUrl: "/templates/financial-projections.xlsx",
-        },
-        {
-          id: 6,
-          title: "Pitch Deck Outline",
-          description: "Structure your investor presentation.",
-          type: "download",
-          fileUrl: "/templates/pitch-deck-outline.pptx",
-        },
-      ],
-    },
-    {
-      id: "videos",
-      title: "Training Videos",
-      resources: [
-        {
-          id: 7,
-          title: "Pitching to Investors",
-          description: "Learn how to deliver a winning pitch.",
-          type: "view",
-          link: "/videos/pitch-training",
-        },
-        {
-          id: 8,
-          title: "Financial Projections Basics",
-          description: "Understand key financial metrics.",
-          type: "view",
-          link: "/videos/financial-basics",
-        },
-        {
-          id: 9,
-          title: "Building Your Team",
-          description: "Hiring and culture for startups.",
-          type: "view",
-          link: "/videos/building-team",
-        },
-      ],
-    },
-    {
-      id: "schemes",
-      title: "Government Schemes",
-      resources: [
-        {
-          id: 10,
-          title: "Women Entrepreneurship Scheme",
-          description: "Funding and support for women-led businesses.",
-          type: "view",
-          link: "/schemes/women-entrepreneurship",
-        },
-        {
-          id: 11,
-          title: "Startup India",
-          description: "Benefits and registration process.",
-          type: "view",
-          link: "/schemes/startup-india",
-        },
-        {
-          id: 12,
-          title: "MSME Loans",
-          description: "Government-backed loans for small businesses.",
-          type: "view",
-          link: "/schemes/msme-loans",
-        },
-      ],
-    },
-  ];
+  const [resources, setResources] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
   const [selectedResource, setSelectedResource] = useState(null);
   const [modalType, setModalType] = useState(null); // 'view' or 'download'
+
+  useEffect(() => {
+    const fetchResources = async () => {
+      try {
+        const res = await api.get('/resources');
+        setResources(res.data);
+      } catch (err) {
+        console.error("Failed to load resources:", err);
+        setError("Failed to load resources. Please try again later.");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchResources();
+  }, []);
+
+  // Format flat data into sections
+  const categoryMap = {
+    guides: "Business Guides",
+    templates: "Startup Templates",
+    videos: "Training Videos",
+    schemes: "Government Schemes"
+  };
+
+  const resourceSections = Object.keys(categoryMap).map(categoryKey => {
+    return {
+      id: categoryKey,
+      title: categoryMap[categoryKey],
+      resources: resources.filter(r => r.category === categoryKey)
+    };
+  }).filter(section => section.resources.length > 0);
 
   const openModal = (resource, actionType) => {
     setSelectedResource(resource);
@@ -129,7 +53,7 @@ const Resources = () => {
 
   // Trigger file download (for download action)
   const handleDownload = (resource) => {
-    // Create a simple text file with resource details
+    // Basic mock text file download since real files aren't hosted yet
     const content = `Title: ${resource.title}\nDescription: ${resource.description}\n\nThis is a sample file. In a real app, you would serve the actual file from ${resource.fileUrl || 'a server path'}.`;
     const blob = new Blob([content], { type: "text/plain" });
     const url = URL.createObjectURL(blob);
@@ -143,30 +67,38 @@ const Resources = () => {
     closeModal(); // close modal after download starts
   };
 
+  if (loading) return <div className="loading-spinner">Loading resources...</div>;
+
   return (
     <div className="resources-page">
       <h1 className="page-title">Resource Center</h1>
 
+      {error && <p className="error-message">{error}</p>}
+
       <div className="resources-container">
-        {resourceSections.map((section) => (
-          <div key={section.id} className="resource-section">
-            <h2 className="section-title">{section.title}</h2>
-            <div className="resources-grid">
-              {section.resources.map((resource) => (
-                <div className="resource-card card" key={resource.id}>
-                  <h3>{resource.title}</h3>
-                  <p className="resource-description">{resource.description}</p>
-                  <button
-                    className={`btn-${resource.type}`}
-                    onClick={() => openModal(resource, resource.type)}
-                  >
-                    {resource.type === "view" ? "View" : "Download"}
-                  </button>
-                </div>
-              ))}
+        {resourceSections.length === 0 && !error ? (
+          <p className="no-data">No resources available at the moment.</p>
+        ) : (
+          resourceSections.map((section) => (
+            <div key={section.id} className="resource-section">
+              <h2 className="section-title">{section.title}</h2>
+              <div className="resources-grid">
+                {section.resources.map((resource) => (
+                  <div className="resource-card card" key={resource._id}>
+                    <h3>{resource.title}</h3>
+                    <p className="resource-description">{resource.description}</p>
+                    <button
+                      className={`btn-${resource.type}`}
+                      onClick={() => openModal(resource, resource.type)}
+                    >
+                      {resource.type === "view" ? "View" : "Download"}
+                    </button>
+                  </div>
+                ))}
+              </div>
             </div>
-          </div>
-        ))}
+          ))
+        )}
       </div>
 
       {/* Modal for resource details */}

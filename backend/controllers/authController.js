@@ -1,5 +1,6 @@
 const User = require('../models/User');
 const generateToken = require('../utils/generateToken');
+const { sendEmail } = require('../utils/emailService');
 
 // @desc    Register a new user
 // @route   POST /api/auth/register
@@ -53,6 +54,16 @@ const registerUser = async (req, res) => {
 
     if (user) {
       console.log('Registration successful:', user._id);
+      
+      // Send Welcome Email
+      await sendEmail({
+        to: user.email,
+        subject: `Welcome to Women Entrepreneur Platform, ${user.name}!`,
+        html: `<h2>Welcome aboard, ${user.name}!</h2>
+               <p>We are thrilled to have you join our community as a <strong>${user.role}</strong>.</p>
+               <p>Please log in to your dashboard to complete your profile and start exploring opportunities.</p>`
+      });
+
       res.status(201).json({
         _id: user._id,
         name: user.name,

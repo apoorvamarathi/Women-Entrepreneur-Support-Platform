@@ -11,6 +11,8 @@ import Funding from '../pages/Funding'
 import Events from '../pages/Events'
 import Resources from '../pages/Resources'
 import Community from '../pages/Community'
+import AdminMentors from '../pages/AdminMentors'
+import ReviewFunding from '../pages/ReviewFunding'
 import useAuthStore from '../store/useAuthStore'
 
 const PrivateRoute = ({ children }) => {
@@ -34,6 +36,8 @@ export default function AppRouter() {
         <Route path="events" element={<Events />} />
         <Route path="resources" element={<Resources />} />
         <Route path="community" element={<Community />} />
+        <Route path="admin/mentors" element={<AdminMentors />} />
+        <Route path="funding-review" element={<ReviewFunding />} />
       </Route>
     </Routes>
   )

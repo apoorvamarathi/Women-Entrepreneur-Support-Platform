@@ -183,6 +183,52 @@ const getDashboardAnalytics = async (req, res) => {
   }
 };
 
+// @desc    Get all mentorship requests
+// @route   GET /api/admin/mentorship-requests
+// @access  Admin
+const getMentorshipRequests = async (req, res) => {
+  try {
+    const requests = await MentorshipRequest.find()
+      .populate('entrepreneurId', 'name email')
+      .populate({ path: 'mentorId', select: 'userId', populate: { path: 'userId', select: 'name email' } })
+      .sort('-createdAt');
+    res.json({ success: true, requests });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// @desc    Assign a mentor to an entrepreneur (create or update request)
+// @route   POST /api/admin/mentorship-assign
+// @access  Admin
+const assignMentor = async (req, res) => {
+  try {
+    const { entrepreneurId, mentorId, requestId } = req.body;
+    
+    // If requestId is provided, update existing
+    if (requestId) {
+      const request = await MentorshipRequest.findById(requestId);
+      if (!request) return res.status(404).json({ success: false, message: 'Request not found' });
+      request.mentorId = mentorId;
+      request.status = 'accepted'; // Update status to reflect assignment
+      await request.save();
+      return res.json({ success: true, request });
+    }
+
+    // Otherwise create a new assignment
+    const request = await MentorshipRequest.create({
+      entrepreneurId,
+      mentorId,
+      status: 'accepted',
+      sessionDate: new Date() // admin might not set session, default to now
+    });
+
+    res.json({ success: true, request });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
 module.exports = {
   getUsers,
   approveUser,
@@ -190,4 +236,6 @@ module.exports = {
   getReports,
   generateReport,
   getDashboardAnalytics,
-};
+  getMentorshipRequests,
+  assignMentor
+};

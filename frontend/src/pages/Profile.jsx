@@ -9,6 +9,7 @@ const Profile = () => {
     stage: "",
     fundingRequired: "",
     website: "",
+    location: "",
     description: "",
     documents: null,
   });
@@ -111,15 +112,27 @@ const Profile = () => {
           </div>
         </div>
 
-        <div className="form-group">
-          <label>Website (optional)</label>
-          <input
-            type="url"
-            name="website"
-            value={formData.website}
-            onChange={handleChange}
-            className="input-field"
-          />
+        <div className="form-row">
+          <div className="form-group">
+            <label>Website (optional)</label>
+            <input
+              type="url"
+              name="website"
+              value={formData.website}
+              onChange={handleChange}
+              className="input-field"
+            />
+          </div>
+          <div className="form-group">
+            <label>Location (City, Country)</label>
+            <input
+              type="text"
+              name="location"
+              value={formData.location || ""}
+              onChange={handleChange}
+              className="input-field"
+            />
+          </div>
         </div>
 
         <div className="form-group">

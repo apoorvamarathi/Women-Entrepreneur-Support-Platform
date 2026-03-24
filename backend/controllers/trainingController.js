@@ -1,5 +1,7 @@
 const TrainingProgram = require('../models/TrainingProgram');
 const TrainingEnrollment = require('../models/TrainingEnrollment');
+const User = require('../models/User');
+const { sendEmail } = require('../utils/emailService');
 
 // @desc    Get all training programs and user enrollments
 // @route   GET /api/training
@@ -76,6 +78,22 @@ const enrollInProgram = async (req, res) => {
       userId: req.user.id,
       programId
     });
+
+    const user = await User.findById(req.user.id);
+
+    // Send Enrollment Confirmation Email
+    if (user) {
+      await sendEmail({
+        to: user.email,
+        subject: `Enrollment Confirmed: ${program.title}`,
+        html: `<h2>You are enrolled!</h2>
+               <p>Hi ${user.name}, you have successfully enrolled in <strong>${program.title}</strong>.</p>
+               <p>Trainer: ${program.trainer}<br/>
+               Duration: ${program.duration}<br/>
+               Schedule: ${new Date(program.schedule).toLocaleDateString()}</p>
+               <p>Get ready to learn and grow!</p>`
+      });
+    }
 
     res.status(201).json(enrollment);
   } catch (error) {

@@ -49,11 +49,11 @@ const InvestorDashboard = () => {
       <div className="quick-actions">
         <h2>Quick Actions</h2>
         <div className="actions-grid">
-          <Link to="/funding" className="action-card card">
+          <Link to="/funding-review" className="action-card card">
             <h3>Review Applications</h3>
             <p>Check pending funding requests</p>
           </Link>
-          <Link to="/funding" className="action-card card">
+          <Link to="/funding-review" className="action-card card">
             <h3>View Startup Profiles</h3>
             <p>Browse entrepreneur businesses</p>
           </Link>

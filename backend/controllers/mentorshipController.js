@@ -1,6 +1,7 @@
 const MentorshipRequest = require('../models/MentorshipRequest');
 const Mentor = require('../models/Mentor');
 const User = require('../models/User');
+const EntrepreneurProfile = require('../models/EntrepreneurProfile');
 const { createNotification } = require('../utils/notificationHelper');
 
 // @desc    Get all available mentors
@@ -59,19 +60,22 @@ const createMentorshipRequest = async (req, res) => {
 // @access  Private
 const updateMentorshipRequest = async (req, res) => {
   try {
-    const { status } = req.body;
+    const { status, notes } = req.body;
     const request = await MentorshipRequest.findById(req.params.id);
 
     if (!request) {
       return res.status(404).json({ message: 'Request not found' });
     }
 
-    // Check if the current user is the mentor for this request
-    if (request.mentorId.toString() !== req.user.id) {
+    // Check if the current user is the mentor or entrepreneur 
+    // Usually only mentors accept/reject, but notes could be added by mentors.
+    if (request.mentorId.toString() !== req.user.id && request.entrepreneurId.toString() !== req.user.id) {
        return res.status(401).json({ message: 'User not authorized to update this request' });
     }
 
-    request.status = status;
+    if (status) request.status = status;
+    if (notes !== undefined) request.notes = notes;
+    
     const updatedRequest = await request.save();
 
     res.status(200).json(updatedRequest);
@@ -97,11 +101,16 @@ const getUserSessions = async (req, res) => {
     const previous = [];
 
     requests.forEach(reqDoc => {
+      // If the current user is the mentor, show the mentee's name. Otherwise, show the mentor's name.
+      const isMentorUser = reqDoc.mentorId?._id?.toString() === userId || reqDoc.mentorId?.toString() === userId;
+      
+      const displayName = isMentorUser 
+        ? (reqDoc.entrepreneurId?.userId?.name || 'Unknown Mentee')
+        : (reqDoc.mentorId?.userId?.name || (reqDoc.mentorId ? 'Unknown Mentor' : 'Pending Mentor'));
+
       const sessionObj = {
         id: reqDoc._id,
-        mentor:
-          reqDoc.mentorId?.userId?.name ||
-          (reqDoc.mentorId ? 'Unknown Mentor' : ''),
+        mentor: displayName,
         time: reqDoc.sessionDate,
         status: reqDoc.status,
         notes: reqDoc.notes || ''
@@ -120,9 +129,84 @@ const getUserSessions = async (req, res) => {
   }
 };
 
+// @desc    Auto match entrepreneur with best mentor
+// @route   POST /api/mentorship/auto-match
+// @access  Private
+const autoMatchMentor = async (req, res) => {
+  try {
+    if (req.user.role !== 'entrepreneur') {
+      return res.status(403).json({ message: 'Only entrepreneurs can auto-match' });
+    }
+
+    const profile = await EntrepreneurProfile.findOne({ userId: req.user.id });
+    if (!profile) {
+      return res.status(404).json({ message: 'Entrepreneur profile not found' });
+    }
+
+    // Existing requests for this entrepreneur
+    const existingRequests = await MentorshipRequest.find({ entrepreneurId: req.user.id });
+    const matchedMentorIds = existingRequests.map(r => r.mentorId?.toString());
+
+    // Get available mentors
+    const availableMentors = await Mentor.find({ availability: true }).populate('userId', 'name email');
+    
+    if (availableMentors.length === 0) {
+      return res.status(404).json({ message: 'No available mentors found' });
+    }
+
+    let bestMentor = null;
+    let highestScore = -1;
+
+    for (const mentor of availableMentors) {
+      // Skip if already requested or matched
+      if (matchedMentorIds.includes(mentor._id.toString())) continue;
+
+      let score = 0;
+
+      // Scoring logic
+      if (mentor.industryExpertise?.includes(profile.industry)) score += 5;
+      if (mentor.preferredStages?.includes(profile.stage)) score += 3;
+      if (mentor.location && profile.location && mentor.location.toLowerCase() === profile.location.toLowerCase()) score += 2;
+      
+      // +1 point per 2 years of experience
+      if (mentor.experience) {
+        score += Math.floor(mentor.experience / 2);
+      }
+
+      if (score > highestScore) {
+        highestScore = score;
+        bestMentor = mentor;
+      }
+    }
+
+    if (!bestMentor) {
+      return res.status(404).json({ message: 'Could not find a suitable unassigned mentor.' });
+    }
+
+    // Create request (pending for the mentor to accept)
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+
+    const request = await MentorshipRequest.create({
+      entrepreneurId: req.user.id,
+      mentorId: bestMentor._id,
+      sessionDate: tomorrow.toISOString(),
+      status: 'pending'
+    });
+
+    await createNotification(bestMentor.userId, `AUTO-MATCH: ${req.user.name} has been matched with you based on your profile compatibility.`);
+
+    res.status(201).json({ mentor: bestMentor, request });
+
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 module.exports = {
   getMentors,
   createMentorshipRequest,
   updateMentorshipRequest,
-  getUserSessions
+  getUserSessions,
+  autoMatchMentor
 };

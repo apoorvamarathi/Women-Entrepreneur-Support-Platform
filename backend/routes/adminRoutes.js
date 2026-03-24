@@ -7,7 +7,9 @@ const {
   rejectUser,
   getReports,
   generateReport,
-  getDashboardAnalytics
+  getDashboardAnalytics,
+  getMentorshipRequests,
+  assignMentor
 } = require('../controllers/adminController');
 
 // All routes require admin role
@@ -20,5 +22,7 @@ router.put('/users/:id/reject', rejectUser);
 router.get('/reports', getReports);
 router.post('/reports/generate', generateReport);
 router.get('/analytics', getDashboardAnalytics);
+router.get('/mentorship-requests', getMentorshipRequests);
+router.post('/mentorship-assign', assignMentor);
 
 module.exports = router;

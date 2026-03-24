@@ -21,6 +21,8 @@ const entrepreneurProfileSchema = new mongoose.Schema({
 
   website: String,
 
+  location: String,
+
   description: String,
 
   documents: [

@@ -19,7 +19,12 @@ const mentorshipRequestSchema = new mongoose.Schema({
     default: "pending"
   },
 
-  sessionDate: Date
+  sessionDate: Date,
+
+  notes: {
+    type: String,
+    default: ""
+  }
 
 }, { timestamps: true });
 

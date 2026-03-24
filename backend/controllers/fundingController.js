@@ -1,13 +1,18 @@
 const FundingApplication = require('../models/FundingApplication');
 const { createNotification } = require('../utils/notificationHelper');
+const { sendEmail } = require('../utils/emailService');
 
-// @desc    Get all funding applications (for investors/admins)
+// @desc    Get funding applications (filtered by role)
 // @route   GET /api/funding
 // @access  Private
 const getFundingApplications = async (req, res) => {
   try {
-    // Basic implementation; you'd want to filter based on user role
-    const applications = await FundingApplication.find().populate('entrepreneurId', 'name email');
+    let query = {};
+    if (req.user.role === 'entrepreneur') {
+      query.entrepreneurId = req.user.id;
+    }
+    
+    const applications = await FundingApplication.find(query).populate('entrepreneurId', 'name email');
     res.status(200).json(applications);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -38,6 +43,16 @@ const createFundingApplication = async (req, res) => {
 
     // Send notification to entrepreneur
     await createNotification(req.user.id, `Your funding application for $${amount} has been submitted. We'll review it shortly!`);
+
+    // Send Investor Alert Email
+    await sendEmail({
+      to: 'investors@weplatform.com', // In a real app, query all users with role 'investor' and BCC them
+      subject: `New Funding Application Alert: $${amount}`,
+      html: `<h2>New Investment Opportunity!</h2>
+             <p>A new funding application has been submitted by an entrepreneur.</p>
+             <p><strong>Requested Amount:</strong> $${amount}</p>
+             <p>Please log in to the platform to review their pitch deck and profile.</p>`
+    });
 
     res.status(201).json(application);
   } catch (error) {

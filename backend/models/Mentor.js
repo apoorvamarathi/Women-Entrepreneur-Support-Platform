@@ -12,6 +12,13 @@ const mentorSchema = new mongoose.Schema({
 
   experience: Number,
 
+  location: String,
+  
+  preferredStages: [{
+    type: String,
+    enum: ["idea", "startup", "growth", "established"]
+  }],
+
   availability: {
     type: Boolean,
     default: true
