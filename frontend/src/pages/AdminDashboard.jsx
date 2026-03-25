@@ -136,7 +136,7 @@ const AdminDashboard = () => {
       icon: <FiBookOpen />,
       color: "#28C76F",
       action: "manage-training",
-      count: data.stats?.totalTrainingPrograms || 0, // active programs
+      count: data.stats?.totalTrainingPrograms || 0,
     },
     {
       id: 4,

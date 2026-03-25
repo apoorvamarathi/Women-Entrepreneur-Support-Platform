@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import api from '../services/api';
 import { FiCheckCircle, FiClock, FiUser, FiBriefcase } from 'react-icons/fi';
-import './Users.css'; // Reusing Users CSS for table styling
+import './Users.css';
 
 const AdminMentors = () => {
   const [requests, setRequests] = useState([]);
@@ -19,7 +19,7 @@ const AdminMentors = () => {
       setLoading(true);
       const [reqRes, mentorsRes] = await Promise.all([
         api.get('/admin/mentorship-requests'),
-        api.get('/mentorship/mentors') // Using existing public/private mentors route
+        api.get('/mentorship/mentors')
       ]);
       setRequests(reqRes.data.requests || []);
       setMentors(mentorsRes.data || []);

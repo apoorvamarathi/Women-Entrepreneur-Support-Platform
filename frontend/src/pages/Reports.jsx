@@ -28,9 +28,9 @@ const Reports = () => {
   }, []);
 
   const handleDownload = (report) => {
-    // In a real app, you'd trigger file download via URL
+    // In a real app, you'd trigger file download via url
     alert(`Downloading ${report.name}`);
-    // Example: window.open(report.url, '_blank');
+    // Example: Window.open(report.url, '_blank');
   };
 
   const handleGenerate = async (e) => {
