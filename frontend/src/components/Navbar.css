@@ -82,3 +82,53 @@
   color: #EA5455;
   background: rgba(234, 84, 85, 0.1);
 }
+
+.bell-wrapper {
+  position: relative;
+  cursor: pointer;
+}
+
+.notification-badge {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background-color: #EA5455;
+  color: white;
+  font-size: 0.7rem;
+  font-weight: bold;
+  height: 18px;
+  min-width: 18px;
+  border-radius: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 4px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.notification-item {
+  padding: 12px;
+  border-bottom: 1px solid var(--border-color);
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.notification-item p {
+  margin: 0 0 4px 0;
+  font-size: 0.9rem;
+  color: var(--text-dark);
+}
+
+.notification-item span {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.notification-item.unread {
+  background-color: rgba(108, 99, 255, 0.05);
+  border-left: 3px solid var(--primary-color);
+}
+
+.notification-item:hover {
+  background-color: var(--bg-color);
+}

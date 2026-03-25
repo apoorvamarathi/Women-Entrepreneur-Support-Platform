@@ -26,10 +26,23 @@ const Navbar = ({ toggleSidebar }) => {
       }
     };
 
-    if (showNotifications) {
+    if (user) {
       fetchNotifications();
     }
-  }, [showNotifications]);
+  }, [user]);
+
+  const handleMarkAsRead = async (id) => {
+    try {
+      await api.put(`/notifications/${id}/read`);
+      setNotifications(notifications.map(n => 
+        (n._id === id || n.id === id) ? { ...n, status: 'read' } : n
+      ));
+    } catch (error) {
+      console.error("Failed to mark as read", error);
+    }
+  };
+
+  const unreadCount = notifications.filter(n => n.status === 'unread').length;
 
   const handleLogout = () => {
     logout();
@@ -46,7 +59,12 @@ const Navbar = ({ toggleSidebar }) => {
       </div>
       <div className="navbar-right">
         <div className="notification-container">
-          <FiBell className="bell-icon" onClick={() => setShowNotifications(!showNotifications)} />
+          <div className="bell-wrapper" onClick={() => setShowNotifications(!showNotifications)}>
+            <FiBell className="bell-icon" />
+            {unreadCount > 0 && (
+              <span className="notification-badge">{unreadCount}</span>
+            )}
+          </div>
           {showNotifications && (
             <div className="notification-dropdown">
               {loading ? (
@@ -55,7 +73,11 @@ const Navbar = ({ toggleSidebar }) => {
                 <p style={{ padding: '10px' }}>No notifications</p>
               ) : (
                 notifications.map((n) => (
-                  <div key={n._id || n.id} className="notification-item">
+                  <div 
+                    key={n._id || n.id} 
+                    className={`notification-item ${n.status === 'unread' ? 'unread' : ''}`}
+                    onClick={() => n.status === 'unread' && handleMarkAsRead(n._id || n.id)}
+                  >
                     <p>{n.message}</p>
                     <span>{new Date(n.createdAt).toLocaleDateString()}</span>
                   </div>

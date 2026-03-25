@@ -172,15 +172,15 @@ const Funding = () => {
               </thead>
               <tbody>
                 {applications.map((app) => (
-                  <tr key={app.id}>
-                    <td>{app.startupName}</td>
+                  <tr key={app._id || app.id}>
+                    <td>{app.startupName || app.entrepreneurId?.name || "Your Startup"}</td>
                     <td>₹{app.amount.toLocaleString()}</td>
                     <td>
                       <span className={`status ${app.status.toLowerCase()}`}>
                         {app.status}
                       </span>
                     </td>
-                    <td>{formatDate(app.date)}</td>
+                    <td>{formatDate(app.date || app.createdAt)}</td>
                   </tr>
                 ))}
               </tbody>

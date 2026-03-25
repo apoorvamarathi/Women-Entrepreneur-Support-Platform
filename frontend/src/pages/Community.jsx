@@ -49,14 +49,14 @@ const Community = () => {
     }
 
     try {
-      await api.post(`/community/posts/${postId}/reply`, { text: reply });
-      // Update the post with the new reply
+      const res = await api.post(`/community/posts/${postId}/reply`, { text: reply });
+      // Update the post with the new reply returned from the server (which includes User metadata)
       setPosts(posts.map(post => {
         if (post.id === postId) {
           return {
             ...post,
-            replies: [...(post.replies || []), { text: reply }],
-            repliesCount: (post.repliesCount || 0) + 1
+            replies: res.data.replies,
+            repliesCount: res.data.repliesCount
           };
         }
         return post;

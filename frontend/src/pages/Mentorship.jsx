@@ -170,7 +170,7 @@ const Mentorship = () => {
                 <button
                   type="button"
                   className="btn-primary request-btn"
-                  onClick={() => handleRequestMentorship(mentor._id, mentor.userId?.name)}
+                  onClick={() => handleRequestMentorship(mentor.userId?._id || mentor.userId, mentor.userId?.name)}
                   disabled={!mentor.availability}
                 >
                   Request Mentorship

@@ -18,7 +18,7 @@ const getProfile = async (req, res) => {
       
       if (profile) {
         // Calculate Completeness Score
-        const fields = ['businessName', 'industry', 'stage', 'fundingRequired', 'website', 'location', 'description', 'documents'];
+        const fields = ['businessName', 'industry', 'stage', 'fundingRequired', 'website', 'location', 'description'];
         let filledCount = 0;
         fields.forEach(f => {
           if (profile[f] && profile[f].toString().trim() !== '' && (Array.isArray(profile[f]) ? profile[f].length > 0 : true)) {

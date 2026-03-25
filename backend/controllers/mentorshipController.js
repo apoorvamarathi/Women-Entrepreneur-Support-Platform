@@ -94,7 +94,7 @@ const getUserSessions = async (req, res) => {
     // Find requests where user is either entrepreneur or mentor
     const requests = await MentorshipRequest.find({
       $or: [{ entrepreneurId: userId }, { mentorId: userId }]
-    }).populate('mentorId', 'userId').populate('entrepreneurId', 'userId');
+    }).populate('mentorId', 'name email').populate('entrepreneurId', 'name email');
 
     const now = new Date();
     const upcoming = [];
@@ -105,8 +105,8 @@ const getUserSessions = async (req, res) => {
       const isMentorUser = reqDoc.mentorId?._id?.toString() === userId || reqDoc.mentorId?.toString() === userId;
       
       const displayName = isMentorUser 
-        ? (reqDoc.entrepreneurId?.userId?.name || 'Unknown Mentee')
-        : (reqDoc.mentorId?.userId?.name || (reqDoc.mentorId ? 'Unknown Mentor' : 'Pending Mentor'));
+        ? (reqDoc.entrepreneurId?.name || 'Unknown Mentee')
+        : (reqDoc.mentorId?.name || (reqDoc.mentorId ? 'Unknown Mentor' : 'Pending Mentor'));
 
       const sessionObj = {
         id: reqDoc._id,
@@ -145,7 +145,7 @@ const autoMatchMentor = async (req, res) => {
 
     // Existing requests for this entrepreneur
     const existingRequests = await MentorshipRequest.find({ entrepreneurId: req.user.id });
-    const matchedMentorIds = existingRequests.map(r => r.mentorId?.toString());
+    const matchedMentorUserIds = existingRequests.map(r => r.mentorId?.toString());
 
     // Get available mentors
     const availableMentors = await Mentor.find({ availability: true }).populate('userId', 'name email');
@@ -159,7 +159,7 @@ const autoMatchMentor = async (req, res) => {
 
     for (const mentor of availableMentors) {
       // Skip if already requested or matched
-      if (matchedMentorIds.includes(mentor._id.toString())) continue;
+      if (matchedMentorUserIds.includes(mentor.userId?._id?.toString() || mentor.userId?.toString())) continue;
 
       let score = 0;
 
@@ -189,7 +189,7 @@ const autoMatchMentor = async (req, res) => {
 
     const request = await MentorshipRequest.create({
       entrepreneurId: req.user.id,
-      mentorId: bestMentor._id,
+      mentorId: bestMentor.userId,
       sessionDate: tomorrow.toISOString(),
       status: 'pending'
     });

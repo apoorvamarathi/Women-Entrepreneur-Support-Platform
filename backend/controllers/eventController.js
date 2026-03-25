@@ -7,7 +7,7 @@ const getEvents = async (req, res) => {
   try {
     const events = await Event.find()
       .sort({ date: 1 })
-      .select('_id title description date time speaker');
+      .select('_id title description date time speaker registeredUsers');
     
     // Map for frontend
     const mappedEvents = events.map(event => ({
@@ -16,7 +16,8 @@ const getEvents = async (req, res) => {
       description: event.description,
       date: event.date ? new Date(event.date).toLocaleDateString() : '',
       time: event.time || '',
-      speaker: event.speaker
+      speaker: event.speaker,
+      registeredUsers: event.registeredUsers ? event.registeredUsers.map(u => u.toString()) : []
     }));
     
     res.status(200).json(mappedEvents);

@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import api from "../services/api";
 import "./Profile.css";
 
@@ -15,6 +16,7 @@ const Profile = () => {
   });
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -50,6 +52,7 @@ const Profile = () => {
     try {
       await api.put("/profile", formData);
       alert("Profile saved successfully!");
+      navigate("/dashboard");
     } catch (error) {
       console.error("Failed to save profile", error);
       alert(error.response?.data?.message || "Failed to save profile.");

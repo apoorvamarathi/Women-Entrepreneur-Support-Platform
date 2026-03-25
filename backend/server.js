@@ -19,7 +19,7 @@ app.use(cors({
 // Apply global rate limiting
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // Limit each IP to 100 requests per `window`
+  max: 1000, // Limit each IP to 1000 requests per window to support SPA loading
   standardHeaders: true,
   legacyHeaders: false,
   message: 'Too many requests from this IP, please try again after 15 minutes'
@@ -30,7 +30,7 @@ app.use(limiter);
 // Specific strict rate limiting for authentication routes
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, 
-  max: 10, // Limit each IP to 10 login/register requests per windowMs to prevent brute-force
+  max: 100, // Limit each IP to 100 login/register requests per windowMs to prevent brute-force
   standardHeaders: true,
   legacyHeaders: false,
   message: 'Too many authentication attempts from this IP, please try again after 15 minutes'

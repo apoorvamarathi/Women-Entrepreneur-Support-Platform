@@ -48,6 +48,7 @@ const Sidebar = ({isOpen,closeSidebar}) => {
       { path: "/mentorship", name: "Mentorship", icon: <FiUsers /> },
       { path: "/training", name: "Training", icon: <FiBookOpen /> },
       { path: "/events", name: "Events", icon: <FiCalendar /> },
+      { path: "/community", name: "Community", icon: <FiMessageCircle /> },
     ];
 
     const investorMenu = [
@@ -60,6 +61,7 @@ const Sidebar = ({isOpen,closeSidebar}) => {
       { path: "/dashboard", name: "Dashboard", icon: <FiGrid /> },
       { path: "/users", name: "Users", icon: <FiUsers /> },
       { path: "/training", name: "Programs", icon: <FiBookOpen /> },
+      { path: "/events", name: "Events", icon: <FiCalendar /> },
       { path: "/reports", name: "Reports", icon: <FiFolder /> },
     ];
 

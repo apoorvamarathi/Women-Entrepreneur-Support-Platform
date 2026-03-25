@@ -39,6 +39,30 @@
   margin-bottom: 48px;
 }
 
+.btn-danger {
+  background-color: #EA5455;
+  color: white;
+  border: none;
+  padding: 0.8rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-danger:hover {
+  background-color: #d84545;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(234, 84, 85, 0.2);
+}
+
+.btn-danger:disabled {
+  background-color: #fca7a7;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
 .mentor-card {
   text-align: center;
 }
