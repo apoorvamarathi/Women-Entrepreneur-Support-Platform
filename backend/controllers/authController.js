@@ -137,20 +137,88 @@ const forgotPassword = async (req, res) => {
 
     const user = await User.findOne({ email });
 
-    // For security, don't reveal if email exists or not
     if (!user) {
       return res.status(200).json({ message: 'If an account with this email exists, a reset link has been sent.' });
     }
 
-    // In a real app, you would generate a reset token and send an email
-    // For now, we'll just return a success message
-    console.log(`Password reset requested for: ${email}`);
+    const resetToken = user.getResetPasswordToken();
+    await user.save({ validateBeforeSave: false });
 
-    res.status(200).json({ 
-      message: 'If an account with this email exists, a reset link has been sent.' 
-    });
+    const resetUrl = `http://localhost:5173/reset-password/${resetToken}`;
+
+    // IMPORTANT: Force log the reset URL to the terminal so the developer can test it
+    // without actually waiting for the real SMTP email to arrive at a fake test email!
+    console.log(`\n\n========================================`);
+    console.log(` 🔐 MAGIC PASSWORD RESET LINK FOR ${user.email} `);
+    console.log(` ${resetUrl} `);
+    console.log(`========================================\n\n`);
+
+    const message = `
+      <h2>Password Reset Request</h2>
+      <p>You are receiving this email because you (or someone else) have requested the reset of a password. Please make a PUT request to: \n\n <a href="${resetUrl}">${resetUrl}</a></p>
+    `;
+
+    try {
+      await sendEmail({
+        to: user.email,
+        subject: 'Password Reset',
+        html: message,
+      });
+
+      res.status(200).json({ message: 'If an account with this email exists, a reset link has been sent.' });
+    } catch (error) {
+      console.error('Email sending failed', error);
+      user.resetPasswordToken = undefined;
+      user.resetPasswordExpire = undefined;
+      await user.save({ validateBeforeSave: false });
+      return res.status(500).json({ message: 'Email could not be sent' });
+    }
+
   } catch (error) {
     console.error('Forgot Password Error:', error);
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
+
+// @desc    Reset password
+// @route   PUT /api/auth/reset-password/:resetToken
+// @access  Public
+const resetPassword = async (req, res) => {
+  try {
+    const crypto = require('crypto');
+    
+    // Get hashed token
+    const resetPasswordToken = crypto
+      .createHash('sha256')
+      .update(req.params.resetToken)
+      .digest('hex');
+
+    const user = await User.findOne({
+      resetPasswordToken,
+      resetPasswordExpire: { $gt: Date.now() },
+    });
+
+    if (!user) {
+      return res.status(400).json({ message: 'Invalid or expired token' });
+    }
+
+    if (!req.body.password || req.body.password.length < 6) {
+      return res.status(400).json({ message: 'Please provide a valid password of at least 6 characters.' });
+    }
+
+    // Set new password
+    user.password = req.body.password;
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpire = undefined;
+    await user.save();
+
+    res.status(200).json({
+      success: true,
+      message: 'Password successfully reset',
+      token: generateToken(user._id),
+    });
+  } catch (error) {
+    console.error('Reset Password Error:', error);
     res.status(500).json({ message: 'Server error', error: error.message });
   }
 };
@@ -159,4 +227,5 @@ module.exports = {
   registerUser,
   loginUser,
   forgotPassword,
+  resetPassword,
 };

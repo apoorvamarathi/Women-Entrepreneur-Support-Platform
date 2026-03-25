@@ -7,6 +7,7 @@ import EntrepreneurDashboard from "./pages/EntrepreneurDashboard";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
 import DashboardLayout from "./layouts/DashboardLayout";
 import Profile from "./pages/Profile";
 import Mentorship from "./pages/Mentorship";
@@ -44,6 +45,7 @@ function App() {
         <Route path="/login" element={<Login/>} />
         <Route path="/register" element={<Register />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password/:resetToken" element={<ResetPassword />} />
 
         {/* Protected routes with sidebar */}
         <Route element={<DashboardLayout />}>
